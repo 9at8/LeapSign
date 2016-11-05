@@ -13,7 +13,8 @@ lastWord = None
 
 
 def player(file):
-    p = vlc.MediaPlayer('Audio/' + file + '.mp3')
+    #p = vlc.MediaPlayer('Audio\' + raw(file) + raw()'.mp3')
+    p = vlc.MediaPlayer("Audio/"+file+".mp3")
     p.play()
 
 
