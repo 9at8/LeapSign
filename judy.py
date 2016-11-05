@@ -62,6 +62,107 @@ def love(frame):
 				print "I love you"
 				lastWord = "love"
 
+''' def very(frame):
+	global lastWord
+	for hand in frame.hands:
+		TYPE_THUMB=0;
+		TYPE_INDEX=TYPE_PROXIMAL=1
+		TYPE_MIDDLE=TYPE_INTERMEDIATE=2
+		TYPE_RING=TYPE_DISTAL=3
+		TYPE_PINKY=4
+
+		tip_ind = Leap.Vector(10000,1000,1000)
+		knuck_ind = Leap.Vector(102,204,1283)
+		tip_mid = Leap.Vector (123,33,22)
+		knuck_mid = Leap.Vector(2,3,15)
+
+		for finger in hand.fingers:
+
+			if finger.type == TYPE_INDEX:
+				for i in xrange(4):
+					bone = finger.bone(i)
+					if bone.type == TYPE_DISTAL:
+						tip_ind = bone.direction
+					if bone.type == TYPE_PROXIMAL:
+						knuck_ind = bone.direction
+					
+			elif finger.type == TYPE_MIDDLE:
+				for i in xrange(4):
+					bone = finger.bone(i)
+					if bone.type == TYPE_DISTAL:
+						tip_mid = bone.direction
+					if bone.type == TYPE_PROXIMAL:
+						knuck_mid = bone.direction
+
+			TIP_DIS = tip_ind - tip_mid
+			KNUCK_DIS = knuck_ind - knuck_mid 
+
+		if (TIP_DIS + KNUCK_DIS <= 0.2 or TIP_DIS + KNUCK_DIS >= -0.2):
+			print "very" 
+			lastWord = 'very'
+''' 
+'''
+def but(frame):
+	global lastWord
+	for hand in frame.hands:
+		handType = "LeftHand" if hand.is_left else "RightHand"
+
+		leftworks = False
+		rightworks = False
+
+		for gesture in frame.gestures():
+			if gesture.type == Leap.Gesture.TYPE_SWIPE:
+				swipe = SwipeGesture(gesture)
+				
+				if handType == "LeftHand": 
+						if (swipe.state != Leap.Gesture.STATE_START):
+							if (swipe.direction.yaw * Leap.RAD_TO_DEG >= 30 and swipe.direction.yaw * Leap.RAD_TO_DEG <= 140 and swipe.direction.roll * Leap.RAD_TO_DEG >= 15 and swipe.direction.roll * Leap.RAD_TO_DEG <=180) == False: 
+								print "LEFT yaw: " + str(swipe.direction.yaw * Leap.RAD_TO_DEG)
+								print "LEFT roll: " + str(swipe.direction.roll * Leap.RAD_TO_DEG)
+								leftworks = True
+								print "LEFT OK" 
+
+				elif handType == "RightHand":
+						if (swipe.state != Leap.Gesture.STATE_START):
+							if (swipe.direction.yaw * Leap.RAD_TO_DEG >= 30 and swipe.direction.yaw * Leap.RAD_TO_DEG <= 140 and swipe.direction.roll * Leap.RAD_TO_DEG >= 15 and swipe.direction.roll * Leap.RAD_TO_DEG <= 180) == True:
+								print "RIGHT yaw: " + str(swipe.direction.yaw * Leap.RAD_TO_DEG)
+								print "RIGHT ole: " + str(swipe.direction.roll * Leap.RAD_TO_DEG)
+								rightworks = True 
+								print "RIGHT OK" 
+
+		
+		if (rightworks and leftworks) == True: 
+			print "but" 
+			lastWord = 'but'						
+''' 
+def hello (frame):
+	global lastWord 
+	for hand in frame.hands: 
+		question = 0
+		for gesture in frame.gestures():
+			if gesture.type == Leap.Gesture.TYPE_SWIPE:
+				swipe = SwipeGesture(gesture) 
+
+				if (swipe.state != Leap.Gesture.STATE_START):
+					if (swipe.direction.yaw * Leap.RAD_TO_DEG >=5 and swipe.direction.yaw * Leap.RAD_TO_DEG <=70 and swipe.direction.pitch * Leap.RAD_TO_DEG >= 5 and swipe.direction.pitch * Leap.RAD_TO_DEG <=80) == True:
+						print "hello"
+						lastWord = 'hello'
+					
+
+def live (frame) 
+	global lastWord 
+	for hand in frame.hands: 
+		handType = "LeftHand" if hand.is_left else "RightHand"
+
+		if handType = "LeftHand" 
+
+'''
+ if gesture.type == Leap.Gesture.TYPE_SWIPE:
+                    swipe = SwipeGesture(gesture)
+                    #print "Swipe ID: " + str(swipe.id) + " State: " + self.state_names[gesture.state] + " Position: " + str(swipe.position) + " Direction:" + str(swipe.direction) + " Swipe: (mm/s): " + str(swipe.speed)
+                    """
+'''
+
 class LeapMotionListener(Leap.Listener):
 	finger_names = ['Thumb', 'Index', 'Middle','Ring','Pinky'];
 	bone_names = ['Metacarpal', 'Proximal','Intermediate','Distal'];
@@ -132,6 +233,9 @@ class LeapMotionListener(Leap.Listener):
 
 		if lastWord != "love":
 			love(frame)
+
+		if lastWord != "hello":
+			hello(frame)
 
 def main():
 	listener = LeapMotionListener()
