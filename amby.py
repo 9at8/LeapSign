@@ -265,6 +265,35 @@ def number(frame):
                     lastWord = "10"
                     return True
     return False
+
+def no(controller):
+    global lastWord
+    if lastWord == 'no':
+        return False
+    frame = controller.frame
+    past = frame.current_frames_per_second//2
+    next_pinch_strength=1.0
+    new_frame=controller.frame(1)
+    while new_frame.is_valid and controller.frame(past) < new_frame:
+        for hand in new_frame.hands:
+            for finger in hand.fingers:
+                if finger.type==TYPE_RING or finger.type == TYPE_PINKY:
+                    for i in xrange(0,4):
+                        bone=finger.bone(i)
+                        if bone.type==TYPE_DISTAL:
+                            if bone.direction.angle_to(hand.direction) > 1:
+                                return False
+            pinch = hand.pinch_strength
+            if pinch > next_pinch_strength:
+                return False
+            else:
+                next_pinch_strength=pinch
+        new_frame = controller.new_frame(1)
+    print 'no'
+    lastWord = 'no'
+    return True
+
+
 class LeapMotionListener(Leap.Listener):
     finger_names = ['Thumb', 'Index', 'Middle', 'Ring', 'pinky']
     bone_names = ['Metacarpal', 'Proximal', 'Intermediate', 'Distal']
@@ -289,10 +318,12 @@ class LeapMotionListener(Leap.Listener):
 
     def on_frame(self, controller):
         frame = controller.frame()
-        if not mom_grandma_dad_grandpa(frame):
+        '''if not mom_grandma_dad_grandpa(frame):
             number(frame)
-            time.sleep(.7)
+            time.sleep(.7)'''
+        #no(controller)
         #cross_fingers(frame)
+        number(frame)
 def main():
     listener = LeapMotionListener()
     controller = Leap.Controller()
