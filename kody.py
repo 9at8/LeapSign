@@ -28,7 +28,6 @@ def please(frame):
                                     if circle.progress >= 1.75:
                                         lastWord = "please"
                                         print 'please'
-                                        return
 
 def house(frame):
     global lastWord
