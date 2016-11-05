@@ -409,12 +409,12 @@ class LeapMotionListener(Leap.Listener):
         global lastWord
         frame = controller.frame()
 
-        time.sleep(0.5)
+        #time.sleep(0.5)
 
         #
         #
         # number(frame)
-
+'''
         if not (cold(frame) or house(frame) or love(frame) or please(frame)):
             number(frame)
         else:
@@ -428,7 +428,14 @@ class LeapMotionListener(Leap.Listener):
                 cold(frame)
 
             if lastWord != 'love':
-                love(frame)
+                love(frame)'''
+        if not please(frame):
+            if not house(frame):
+                if not love(frame):
+                    if not cold(frame):
+                        #if not mom_grandma_dad_grandpa(frame):
+                            number(frame)
+                            time.sleep(0.7)
 
 
 
