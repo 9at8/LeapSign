@@ -77,8 +77,9 @@ def cold(frame):
             lastWord = 'cold'
             print 'cold'
 
-"""
+
 def day(frame):
+    global lastWord
     lefthand = False;
     righthand = False; 
     if(frame.hands==2):
@@ -89,20 +90,24 @@ def day(frame):
             if (abs(hand.palm_normal.roll * Leap.RAD_TO_DEG) >=150 and hand.direction.roll * Leap.RAD_TO_DEG >=60 and hand.direction.roll * Leap.RAD_TO_DEG<=120)==False:
                 lefthand = False
             else:
-                print "LEFT OK"
+#                print "LEFT OK"
+                lefthand = True
         else:
             for gesture in frame.gestures():
                 if gesture.type == Leap.Gesture.TYPE_SWIPE:
-                    swipe = gesture
-                    if (swipe.direction.yaw*Leap.RAD_TO_DEG >= 60 and swipe.direction.yaw*Leap.RAD_TO_DEG <= 120 and swipe.direction.roll * Leap.RAD_TO_DEG >=105 and swipe.direction.roll * Leap.RAD_TO_DEG <=175) == False:
-                        righthand= False
-                    else:
-                        print "RIGHT OK"
+                    swipe = SwipeGesture(gesture)
+                    if (swipe.state != Leap.Gesture.STATE_START):
+#                        print str(swipe.direction.yaw * Leap.RAD_TO_DEG) + " " + str(swipe.direction.roll * Leap.RAD_TO_DEG)
+                        if (swipe.direction.yaw * Leap.RAD_TO_DEG >= 45 and swipe.direction.yaw * Leap.RAD_TO_DEG <= 135 and swipe.direction.roll * Leap.RAD_TO_DEG >= 90 and swipe.direction.roll * Leap.RAD_TO_DEG <= 180) == False:
+                            righthand= False
+                        else:
+#                            print "RIGHT OK"
+                            righthand=True
     if(lefthand and righthand):
         print "day "
         lastWord = "day"
 
-"""
+
 
 
 class LeapMotionListener(Leap.Listener):
@@ -147,8 +152,8 @@ class LeapMotionListener(Leap.Listener):
         if lastWord != 'cold':
             cold(frame)
 
-        #if lastWord != 'day':
-        #day(frame)
+        if lastWord != 'day':
+            day(frame)
         #frame = controller.frame()
 
         """
