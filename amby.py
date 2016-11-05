@@ -1,36 +1,92 @@
 import Leap, sys, thread, time
 from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
 lastWord = "lol"
-TYPE_THUMB=0;
+TYPE_THUMB=TYPE_METACARPAL=0;
 TYPE_INDEX=TYPE_PROXIMAL=1
 TYPE_MIDDLE=TYPE_INTERMEDIATE=2
 TYPE_RING=TYPE_DISTAL=3
-TYPE_pinky=4
-#def grandma_grandpa(frame):
 def RepresentsInt(s):
     try:
         int(s)
         return True
     except ValueError:
         return False
-def mom_dad(frame):
+
+def mom_grandma_dad_grandpa(frame):
     global lastWord
     for hand in frame.hands:
         if hand.sphere_radius > 80:
             handChirality = 1 if hand.is_right else -1
             if Leap.PI/6 < hand.direction.pitch < Leap.PI/3:
                 if -2*Leap.PI/3 < handChirality*hand.palm_normal.roll < -Leap.PI/3:
+                    for gesture in frame.gestures():
+                        if gesture.type == Leap.Gesture.TYPE_CIRCLE:
+                            circle = CircleGesture(gesture)
+                            if (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2) if handChirality == -1 else not (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2): #clockwise
+                                if circle.state != Leap.Gesture.STATE_START:
+                                    if circle.progress >= .75:
+                                        if lastWord != "grandma":
+                                            print "grandma"
+                                            lastWord = "grandma"
+                                            return True
                     if lastWord != "mom":
                         print "mom"
                         lastWord = "mom"
                         return True
             if Leap.PI/3 < hand.direction.pitch < 2*Leap.PI/3:
                 if -2*Leap.PI/3 < handChirality*hand.palm_normal.roll < -Leap.PI/3:
+                    for gesture in frame.gestures():
+                        if gesture.type == Leap.Gesture.TYPE_CIRCLE:
+                            circle = CircleGesture(gesture)
+                            if (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2) if handChirality == -1 else not (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2): #clockwise
+                                if circle.state != Leap.Gesture.STATE_START:
+                                    if circle.progress >= .75:
+                                        if lastWord != "grandpa":
+                                            print "grandpa"
+                                            lastWord = "grandpa"
+                                            return True
                     if lastWord != "dad":
                         print "dad"
                         lastWord = "dad"
                         return True
         return False
+def cross_fingers(frame):
+    for hand in frame.hands:
+        disp_metacarpal=0.0
+        disp_distal=0.0
+        index_finger =None
+        middle_finger =None
+        index_finger_distal =None
+        middle_finger_distal =None
+        index_finger_metacarpal =None
+        middle_finger_metacarpal =None
+        for i in xrange(0,5):
+            finger_i=hand.fingers[i]
+            if finger_i.type==TYPE_MIDDLE:
+                middle_finger=finger_i
+            elif finger_i.type==TYPE_INDEX:
+                index_finger=finger_i
+        for i in xrange(0,4):
+            bone1=index_finger.bone(i)
+            bone2=middle_finger.bone(i)
+            if bone1.type==TYPE_DISTAL:
+                index_finger_distal=bone1
+            elif bone1.type==TYPE_METACARPAL:
+                index_finger_metacarpal=bone1
+            if bone2.type==TYPE_DISTAL:
+                middle_finger_distal=bone2
+            elif bone2.type==TYPE_METACARPAL:
+                middle_finger_metacarpal=bone2
+        if (index_finger_distal.center-middle_finger_distal.center).angle_to(index_finger_metacarpal.center-middle_finger_metacarpal.center) > Leap.PI/2:
+            if lastWord != "are":
+                print "are"
+                lastWord="are"
+                return True
+        return False
+        #print str((index_finger_distal.center-middle_finger_distal.center).angle_to(index_finger_metacarpal.center-middle_finger_metacarpal.center))
+
+
+
 def number(frame):
     global lastWord
     for hand in frame.hands:
@@ -98,6 +154,16 @@ def number(frame):
             thumb_up = False if projection_on_direction_thumb < -.9 else True
             #print str(int(pinky_up)) + str(int(ring_up)) + str(int(middle_up)) + str(int(index_up)) + str(int(thumb_up))
             #print str(projection_on_direction_thumb)
+            if not index_up and not middle_up and not ring_up and not pinky_up and not thumb_up:
+                if RepresentsInt(lastWord):
+                    if int(lastWord) != 0:
+                        print "0"
+                        lastWord = "0"
+                        return True
+                else:
+                    print "0"
+                    lastWord = "0"
+                    return True
             if index_up and not middle_up and not ring_up and not pinky_up and not thumb_up:
                 if RepresentsInt(lastWord):
                     if int(lastWord) != 1:
@@ -223,9 +289,10 @@ class LeapMotionListener(Leap.Listener):
 
     def on_frame(self, controller):
         frame = controller.frame()
-        if not mom_dad(frame):
+        if not mom_grandma_dad_grandpa(frame):
             number(frame)
             time.sleep(.7)
+        #cross_fingers(frame)
 def main():
     listener = LeapMotionListener()
     controller = Leap.Controller()
