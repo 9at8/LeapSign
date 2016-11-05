@@ -89,6 +89,8 @@ def cross_fingers(frame):
 
 
 def number(frame):
+    if len(frame.hands) != 1:
+        return False
     global lastWord
     for hand in frame.hands:
         handChirality = 1 if hand.is_right else -1
@@ -318,8 +320,8 @@ class LeapMotionListener(Leap.Listener):
 
     def on_frame(self, controller):
         frame = controller.frame()
-        if not mom_grandma_dad_grandpa(frame):
-            number(frame)
+        #if not mom_grandma_dad_grandpa(frame):
+        number(frame)
                 #no(controller)
         #cross_fingers(frame)
         #number(frame)

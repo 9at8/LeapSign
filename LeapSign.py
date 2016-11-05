@@ -189,6 +189,8 @@ def represents_int(s):
 
 def number(frame):
     global lastWord
+    if len(frame.hands) != 1:
+        return False
     for hand in frame.hands:
         hand_chirality = 1 if hand.is_right else -1
         if -Leap.PI / 3 < hand_chirality * hand.palm_normal.roll < Leap.PI / 3:
