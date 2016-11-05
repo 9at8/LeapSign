@@ -165,7 +165,7 @@ def number(frame):
                     print "0"
                     lastWord = "0"
                     return True
-            if index_up and not middle_up and not ring_up and not pinky_up and not thumb_up:
+            elif index_up and not middle_up and not ring_up and not pinky_up and not thumb_up:
                 if RepresentsInt(lastWord):
                     if int(lastWord) != 1:
                         print "1"
