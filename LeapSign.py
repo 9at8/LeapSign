@@ -35,7 +35,7 @@ def cold(frame):
             else:
                 cold[1] = False
         if cold[0] and cold[1]:
-            if lastWord != 'cold'
+            if lastWord != 'cold':
                 lastWord = 'cold'
                 print 'cold'
                 player('cold')
@@ -64,11 +64,11 @@ def house(frame):
                 house[1] = False
 
         if house[0] and house[1]:
-            if lastWord!= 'house'
-            lastWord = 'house'
-            print 'house'
-            player('house')
-            return True
+            if lastWord!= 'house':
+                lastWord = 'house'
+                print 'house'
+                player('house')
+                return True
     return False
 
 def love(frame):
@@ -125,7 +125,7 @@ def love(frame):
         thumb_up = False if projection_on_direction_thumb < -.75 else True
 
         if index_up and not middle_up and not ring_up and pinky_up and thumb_up:
-            if lastWord != 'love'
+            if lastWord != 'love':
                 print 'I love you'
                 lastWord = 'love'
                 player('ily')
@@ -144,7 +144,7 @@ def please(frame):
                             if hand.palm_normal.roll * Leap.RAD_TO_DEG <= -65 and hand.palm_normal.roll * Leap.RAD_TO_DEG >= -115:
                                 if hand.direction.yaw * Leap.RAD_TO_DEG >= -115 and hand.direction.yaw * Leap.RAD_TO_DEG <= -65:
                                     if circle.progress >= 1.75:
-                                        if lastWord != 'please'
+                                        if lastWord != 'please':
                                             lastWord = 'please'
                                             print 'please'
                                             player('please')
