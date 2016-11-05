@@ -3,6 +3,24 @@ from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
 
 lastWord = ""
 
+def cw(gesture):
+        if gesture.type == Leap.Gesture.TYPE_CIRCLE:
+            circle = CircleGesture(gesture)
+
+            if (circle.pointable.direction.angle_to(circle.normal) <=Leap.PI/2):
+                return True
+            return False
+
+def roll(part):
+    return part.palm_normal.roll * Leap.RAD_TO_DEG
+
+def yaw(part):
+    return part.direction.yaw * Leap.RAD_TO_DEG
+
+def pitch(part):
+    return part.direction.pitch * Leap.RAD_TO_DEG
+
+
 def please(frame):
         for hand in frame.hands:
             for gesture in frame.gestures():
@@ -11,7 +29,7 @@ def please(frame):
 
 
                     # yaw = -90 roll = 90
-                    if (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI/2)==False:
+                    if (cw(gesture))==False:
                         #print "\n1"
                         if hand.is_right:
                             #print "\n2"
@@ -21,9 +39,9 @@ def please(frame):
                                 #print " Roll : " + str(hand.palm_normal.roll * Leap.RAD_TO_DEG) + " "
                                 #previous = CircleGesture(controller.frame(1).gesture(circle.id))
                                 #swept_angle = (circle.progress - previous.progress) * 2 * Leap.PI
-                                if hand.palm_normal.roll * Leap.RAD_TO_DEG <=-65 and hand.palm_normal.roll * Leap.RAD_TO_DEG >= -115:
+                                if roll(hand) <=-65 and roll(hand) >= -115:
                                     #print "\n4"
-                                    if hand.direction.yaw * Leap.RAD_TO_DEG >=-115 and hand.direction.yaw * Leap.RAD_TO_DEG <= -65 :
+                                    if yaw(hand) >=-115 and yaw(hand) <= -65 :
                                         if circle.progress >= 1.75:
                                             print "please"
                                             lastWord = "please"
@@ -81,7 +99,6 @@ class LeapMotionListener(Leap.Listener):
 
 
     def on_frame(self, controller):
-        print lastWord
         frame = controller.frame()
         if lastWord != "please":
             please(frame)
