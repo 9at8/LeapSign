@@ -39,13 +39,14 @@ def house(frame):
 
         normal = hand.palm_normal
         direction = hand.direction
+        strength = hand.grab_strength
 
-        if hand.is_left:
+        if hand.is_left and strength == 0:
             if (100 >= (direction.yaw * Leap.RAD_TO_DEG) >= 60) and (50 >= (normal.roll * Leap.RAD_TO_DEG) >= 20):
                 house[0] = True
             else:
                 house[0] = False
-        elif hand.is_right:
+        elif hand.is_right and strength == 0:
             if (-100 <= direction.yaw * Leap.RAD_TO_DEG <= -60) and (-50 <= normal.roll * Leap.RAD_TO_DEG <= -20):
                 house[1] = True
             else:
