@@ -87,7 +87,7 @@ def number(frame):
         middle_up = False if angle_to_middle < 1 else True
         ring_up = False if angle_to_ring < 1 else True
         pinky_up = False if angle_to_pinky < 1 else True
-        thumb_up = False if projection_on_direction_thumb < -.89 else True
+        thumb_up = False if projection_on_direction_thumb < -.7 else True
         #print str(int(pinky_up)) + str(int(ring_up)) + str(int(middle_up)) + str(int(index_up)) + str(int(thumb_up))
         #print str(projection_on_direction_thumb)
         if index_up and not middle_up and not ring_up and not pinky_up and not thumb_up:
