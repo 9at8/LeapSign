@@ -3,9 +3,33 @@ from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
 
 lastWord = None
 
+"""
+Yaw:   -Z on X-Z plane      
+Roll:   Y on X-Y plane      
+Pitch: -Z on Y-Z plane      
+"""
+"""
+def no(frame):
+    global lastWord
+    tap = [False,False,False]
+    for hand in frame.hands:
+        if hand.is_right:
+            for gesture in frame.gestures():
+                if gesture.type == Leap.Gesture.TYPE_KEY_TAP:
+                    keytap = KeyTapGesture(gesture)
+                    print keytap.direction.roll * Leap.RAD_TO_DEG
+                    if abs(keytap.direction.roll) * Leap.RAD_TO_DEG >= 150:
+                        if abs(keytap.pointable.yaw) * Leap.RAD_TO_DEG <= 45 and abs(keytap.pointable.pitch) * Leap.RAD_TO_DEG <= 45:
+                            tap[keytap.pointable.type()]=True;
+                            print str(keytap.pointable.type())
+    if tap[1] and tap[2] :
+        print "no"
+        lastWord = "no"
+"""
 
 def please(frame):
     global lastWord
+    op = False
     for hand in frame.hands:
         for gesture in frame.gestures():
             if gesture.type == Leap.Gesture.TYPE_CIRCLE:
@@ -26,8 +50,42 @@ def please(frame):
                                 # print "\n4"
                                 if hand.direction.yaw * Leap.RAD_TO_DEG >= -115 and hand.direction.yaw * Leap.RAD_TO_DEG <= -65:
                                     if circle.progress >= 1.75:
-                                        lastWord = "please"
-                                        print 'please'
+                                        op = True
+    if op:
+        lastWord = "please"
+        print 'please'
+
+"""
+def sorry(frame):
+    global lastWord
+    controller = Leap.Controller()
+    for hand in frame.hands:
+        for gesture in frame.gestures():
+            if gesture.type == Leap.Gesture.TYPE_CIRCLE:
+                circle = CircleGesture(gesture)
+
+                # yaw = -90 roll = 90
+                if (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2) == True:
+                    print "\n1"
+                    if hand.is_right:
+                        print "\n2"
+                        # swept_angle = 0
+                        if circle.state != Leap.Gesture.STATE_START:
+                            # print "\n3"
+                            # print " Roll : " + str(hand.palm_normal.roll * Leap.RAD_TO_DEG) + " "
+
+                            previous = CircleGesture(controller.frame(1).gesture(circle.id))
+                            swept_angle = (circle.progress - previous.progress) * 2 * Leap.PI
+                            print "Palm: " + str(hand.palm_normal.roll * Leap.RAD_TO_DEG) + " " + str(swept_angle)
+
+                            if hand.palm_normal.roll * Leap.RAD_TO_DEG <= -65 and hand.palm_normal.roll * Leap.RAD_TO_DEG >= -115:
+                                # print "\n4"
+                                print hand.direction.yaw * Leap.RAD_TO_DEG
+                                if hand.direction.yaw * Leap.RAD_TO_DEG >= -115 and hand.direction.yaw * Leap.RAD_TO_DEG <= -65:
+                                    if circle.progress >= 1.75:
+#                                        lastWord = "sorry"
+                                        print 'sorry'
+"""
 
 def house(frame):
     global lastWord
@@ -77,7 +135,6 @@ def cold(frame):
             lastWord = 'cold'
             print 'cold'
 
-
 def day(frame):
     global lastWord
     lefthand = False;
@@ -106,8 +163,6 @@ def day(frame):
     if(lefthand and righthand):
         print "day "
         lastWord = "day"
-
-
 
 
 class LeapMotionListener(Leap.Listener):
@@ -141,7 +196,7 @@ class LeapMotionListener(Leap.Listener):
         # print lastWord
         frame = controller.frame()
 
-        time.sleep(0.2)
+        time.sleep(0.2)        
 
         if lastWord != "please":
             please(frame)
@@ -154,6 +209,20 @@ class LeapMotionListener(Leap.Listener):
 
         if lastWord != 'day':
             day(frame)
+
+        """
+        for gesture in frame.gestures():
+
+            if gesture.type == Leap.Gesture.TYPE_CIRCLE:
+                circle = CircleGesture(gesture)
+                print "Circle ID: " + str(circle.id) + " Radius: " + str(circle.radius)
+        """
+        """
+        if gesture.type == Leap.Gesture.TYPE_KEY_TAP:
+            keytap = KeyTapGesture(gesture)
+            print "Key Tap ID: " + str(gesture.id) + " State: " + self.state_names[gesture.state] + " Position: " + str(keytap.position) + "Direction: " + str(keytap.direction)
+        """
+
         #frame = controller.frame()
 
         """
