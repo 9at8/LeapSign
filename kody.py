@@ -1,6 +1,32 @@
 import Leap, sys, thread, time
 from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
 
+def please(frame):
+        for hand in frame.hands:
+            for gesture in frame.gestures():
+                if gesture.type == Leap.Gesture.TYPE_CIRCLE:
+                    circle = CircleGesture(gesture)
+
+
+                    # yaw = -90 roll = 90
+                    if (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI/2)==False:
+                        #print "\n1"
+                        if hand.is_right:
+                            #print "\n2"
+                            #swept_angle = 0
+                            if circle.state != Leap.Gesture.STATE_START:
+                                #print "\n3"
+                                #print " Roll : " + str(hand.palm_normal.roll * Leap.RAD_TO_DEG) + " "
+                                #previous = CircleGesture(controller.frame(1).gesture(circle.id))
+                                #swept_angle = (circle.progress - previous.progress) * 2 * Leap.PI
+                                if hand.palm_normal.roll * Leap.RAD_TO_DEG <=-65 and hand.palm_normal.roll * Leap.RAD_TO_DEG >= -115:
+                                    #print "\n4"
+                                    if hand.direction.yaw * Leap.RAD_TO_DEG >=-115 and hand.direction.yaw * Leap.RAD_TO_DEG <= -65 :
+                                        if circle.progress >= 1.75:
+                                            print "please"
+                                            #lastWord = "please"
+                                            return
+
 class LeapMotionListener(Leap.Listener):
     finger_names = ['Thumb', 'Index', 'Middle', 'Ring', 'Pinky']
     bone_names = ['Metacarpal', 'Proximal', 'Intermediate', 'Distal']
@@ -25,9 +51,14 @@ class LeapMotionListener(Leap.Listener):
 
     #lastWord = ""
 
+
+
     def on_frame(self, controller):
-        lastWord = ""
         frame = controller.frame()
+        please(frame)
+        #lastWord = ""
+        #frame = controller.frame()
+
         """
         print "Frame ID: " + str(frame.id) \
             + " Timestamp: " + str(frame.timestamp) \
@@ -35,10 +66,10 @@ class LeapMotionListener(Leap.Listener):
             + " # of Fingrs " + str(len(frame.fingers)) \
             + " # of Tools " + str(len(frame.tools)) \
             + " # of Gestures " + str(len(frame.gestures()))
-        """
 
-        for hand in frame.hands:
-            """handType = "Left Hand" if hand.is_left else "Right Hand"
+            for hand in frame.hands:
+        
+            handType = "Left Hand" if hand.is_left else "Right Hand"
             print handType + " Hand ID: " + str(hand.id) + " Palm Position: " + str(hand.palm_position)
             
             normal = hand.palm_normal
@@ -55,7 +86,9 @@ class LeapMotionListener(Leap.Listener):
                 for b in range(0,4):
                     bone = finger.bone(b)
                     print "Bone: " + self.bone_names[bone.type] + " Start: " + str(bone.prev_joint) + " End: " + str(bone.next_joint) + " Direction: " + str(bone.direction)
-            """
+
+
+
 
             for gesture in frame.gestures():
                 if gesture.type == Leap.Gesture.TYPE_CIRCLE:
@@ -73,15 +106,16 @@ class LeapMotionListener(Leap.Listener):
                                 #print " Roll : " + str(hand.palm_normal.roll * Leap.RAD_TO_DEG) + " "
                                 #previous = CircleGesture(controller.frame(1).gesture(circle.id))
                                 #swept_angle = (circle.progress - previous.progress) * 2 * Leap.PI
-                                if hand.palm_normal.roll * Leap.RAD_TO_DEG <=-75 and hand.palm_normal.roll * Leap.RAD_TO_DEG >= -105:
+                                if hand.palm_normal.roll * Leap.RAD_TO_DEG <=-65 and hand.palm_normal.roll * Leap.RAD_TO_DEG >= -115:
                                     #print "\n4"
-                                    if hand.direction.yaw * Leap.RAD_TO_DEG >=-105 and hand.direction.yaw * Leap.RAD_TO_DEG <= -75 and lastWord != "please" :
-                                        if circle.progress >= 1.5:
+                                    if hand.direction.yaw * Leap.RAD_TO_DEG >=-115 and hand.direction.yaw * Leap.RAD_TO_DEG <= -65 and lastWord != "please" :
+                                        if circle.progress >= 1.75:
                                             print "please"
                                             lastWord = "please"
 
 
-                    """
+
+
                     if circle.pointable.direction.angle_to(circle.normal) <= Leap.PI/2:
                         clockwiseness = "clockwise"
                     else:
