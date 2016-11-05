@@ -45,44 +45,6 @@ def cold(frame):
     return False
 
 
-'''
-def cross_fingers(frame):
-    for hand in frame.hands:
-        disp_metacarpal=0.0
-        disp_distal=0.0
-        index_finger =None
-        middle_finger =None
-        index_finger_distal =None
-        middle_finger_distal =None
-        index_finger_metacarpal =None
-        middle_finger_metacarpal =None
-        for i in xrange(0,5):
-            finger_i=hand.fingers[i]
-            if finger_i.type==TYPE_MIDDLE:
-                middle_finger=finger_i
-            elif finger_i.type==TYPE_INDEX:
-                index_finger=finger_i
-        for i in xrange(0,4):
-            bone1=index_finger.bone(i)
-            bone2=middle_finger.bone(i)
-            if bone1.type==TYPE_DISTAL:
-                index_finger_distal=bone1
-            elif bone1.type==TYPE_METACARPAL:
-                index_finger_metacarpal=bone1
-            if bone2.type==TYPE_DISTAL:
-                middle_finger_distal=bone2
-            elif bone2.type==TYPE_METACARPAL:
-                middle_finger_metacarpal=bone2
-        if (index_finger_distal.center-middle_finger_distal.center).angle_to(index_finger_metacarpal.center-middle_finger_metacarpal.center) > Leap.PI/2:
-            if lastWord != "are":
-                print "are"
-                lastWord="are"
-                return True
-        return False
-        #print str((index_finger_distal.center-middle_finger_distal.center).angle_to(index_finger_metacarpal.center-middle_finger_metacarpal.center))
-'''
-
-
 def house(frame):
     global lastWord
     house = [False, False]
@@ -168,14 +130,6 @@ def love(frame):
     return False
 
 
-def represents_int(s):
-    try:
-        int(s)
-        return True
-    except ValueError:
-        return False
-
-
 def mom_grandma_dad_grandpa(frame):
     global lastWord
     for hand in frame.hands:
@@ -191,13 +145,15 @@ def mom_grandma_dad_grandpa(frame):
                                         circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2):  # clockwise
                                 if circle.state != Leap.Gesture.STATE_START:
                                     if circle.progress >= .75:
-                                        if lastWord != "grandma":
-                                            print "grandma"
-                                            lastWord = "grandma"
+                                        if lastWord != 'grandma':
+                                            print 'grandma'
+                                            player('grandma')
+                                            lastWord = 'grandma'
                                             return True
-                    if lastWord != "mom":
-                        print "mom"
-                        lastWord = "mom"
+                    if lastWord != 'mom':
+                        print 'mom'
+                        player('mom')
+                        lastWord = 'mom'
                         return True
             if Leap.PI / 3 < hand.direction.pitch < 2 * Leap.PI / 3:
                 if -2 * Leap.PI / 3 < hand_chirality * hand.palm_normal.roll < -Leap.PI / 3:
@@ -209,14 +165,24 @@ def mom_grandma_dad_grandpa(frame):
                                         circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2):  # clockwise
                                 if circle.state != Leap.Gesture.STATE_START:
                                     if circle.progress >= .75:
-                                        if lastWord != "grandpa":
-                                            print "grandpa"
-                                            lastWord = "grandpa"
+                                        if lastWord != 'grandpa':
+                                            print 'grandpa'
+                                            player('grandpa')
+                                            lastWord = 'grandpa'
                                             return True
-                    if lastWord != "dad":
-                        print "dad"
-                        lastWord = "dad"
+                    if lastWord != 'dad':
+                        print 'dad'
+                        player('dad')
+                        lastWord = 'dad'
                         return True
+        return False
+
+
+def represents_int(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
         return False
 
 
@@ -225,10 +191,6 @@ def number(frame):
     for hand in frame.hands:
         hand_chirality = 1 if hand.is_right else -1
         if -Leap.PI / 3 < hand_chirality * hand.palm_normal.roll < Leap.PI / 3:
-            # print "pitch of direction: " + str(hand.direction.pitch*Leap.RAD_TO_DEG) +"  Roll of palm_normal: "+ str(hand.palm_normal.roll*Leap.RAD_TO_DEG)
-            # print "hand palm radius: " + str(hand.sphere_radius)
-            # print "palm velocity: " + str(hand.palm_velocity.magnitude)
-            # print "cross product between index-distal and other finger distals: "
             angle_to_index = 0.0
             angle_to_middle = 0.0
             angle_to_ring = 0.0
@@ -268,117 +230,138 @@ def number(frame):
             ring_up = False if angle_to_ring < 1 else True
             pinky_up = False if angle_to_pinky < 1 else True
             thumb_up = False if projection_on_direction_thumb < -.9 else True
-            # print str(int(pinky_up)) + str(int(ring_up)) + str(int(middle_up)) + str(int(index_up)) + str(int(thumb_up))
-            # print str(projection_on_direction_thumb)
+
             if not index_up and not middle_up and not ring_up and not pinky_up and not thumb_up:
                 if represents_int(lastWord):
                     if int(lastWord) != 0:
-                        print "0"
-                        lastWord = "0"
+                        print '0'
+                        player('zero')
+                        lastWord = '0'
                         return True
                 else:
-                    print "0"
-                    lastWord = "0"
+                    print '0'
+                    player('zero')
+                    lastWord = '0'
                     return True
-            if index_up and not middle_up and not ring_up and not pinky_up and not thumb_up:
+            elif index_up and not middle_up and not ring_up and not pinky_up and not thumb_up:
                 if represents_int(lastWord):
                     if int(lastWord) != 1:
-                        print "1"
-                        lastWord = "1"
+                        print '1'
+                        player('one')
+                        lastWord = '1'
                         return True
                 else:
-                    print "1"
-                    lastWord = "1"
+                    print '1'
+                    player('one')
+                    lastWord = '1'
                     return True
             elif index_up and middle_up and not ring_up and not pinky_up and not thumb_up:
                 if represents_int(lastWord):
                     if int(lastWord) != 2:
-                        print "2"
-                        lastWord = "2"
+                        print '2'
+                        player('two')
+                        lastWord = '2'
                         return True
                 else:
-                    print "2"
-                    lastWord = "2"
+                    print '2'
+                    player('two')
+                    lastWord = '2'
                     return True
             elif index_up and middle_up and not ring_up and not pinky_up and thumb_up:
                 if represents_int(lastWord):
                     if int(lastWord) != 3:
-                        print "3"
-                        lastWord = "3"
+                        print '3'
+                        player('three')
+                        lastWord = '3'
                         return True
                 else:
-                    print "3"
-                    lastWord = "3"
+                    print '3'
+                    player('three')
+                    lastWord = '3'
                     return True
             elif index_up and middle_up and ring_up and pinky_up and not thumb_up:
                 if represents_int(lastWord):
                     if int(lastWord) != 4:
-                        print "4"
-                        lastWord = "4"
+                        print '4'
+                        player('four')
+                        lastWord = '4'
                         return True
                 else:
-                    print "4"
-                    lastWord = "4"
+                    print '4'
+                    player('four')
+                    lastWord = '4'
                     return True
             elif index_up and middle_up and ring_up and pinky_up and thumb_up:
                 if represents_int(lastWord):
                     if int(lastWord) != 5:
-                        print "5"
-                        lastWord = "5"
+                        print '5'
+                        player('five')
+                        lastWord = '5'
                         return True
                 else:
-                    print "5"
-                    lastWord = "5"
+                    print '5'
+                    player('five')
+                    lastWord = '5'
                     return True
             elif index_up and middle_up and ring_up and not pinky_up and not thumb_up:
                 if represents_int(lastWord):
                     if int(lastWord) != 6:
-                        print "6"
-                        lastWord = "6"
+                        print '6'
+                        player('six')
+                        lastWord = '6'
                         return True
                 else:
-                    print "6"
-                    lastWord = "6"
+                    print '6'
+                    player('six')
+                    lastWord = '6'
                     return True
             elif index_up and middle_up and not ring_up and pinky_up and thumb_up:
                 if represents_int(lastWord):
                     if int(lastWord) != 7:
-                        print "7"
-                        lastWord = "7"
+                        print '7'
+                        player('seven')
+                        lastWord = '7'
                         return True
                 else:
-                    print "7"
-                    lastWord = "7"
+                    print '7'
+                    player('seven')
+                    lastWord = '7'
                     return True
             elif index_up and not middle_up and ring_up and pinky_up and thumb_up:
                 if represents_int(lastWord):
                     if int(lastWord) != 8:
-                        print "8"
-                        lastWord = "8"
+                        print '8'
+                        player('eight')
+                        lastWord = '8'
                         return True
                 else:
-                    print "8"
-                    lastWord = "8"
+                    print '8'
+                    player('eight')
+                    lastWord = '8'
                     return True
             elif not index_up and middle_up and ring_up and pinky_up and thumb_up:
                 if represents_int(lastWord):
                     if int(lastWord) != 9:
-                        print "9"
-                        lastWord = "9"
+                        print '9'
+                        player('nine')
+                        lastWord = '9'
                         return True
                 else:
-                    print "9"
-                    lastWord = "9"
+                    print '9'
+                    player('nine')
+                    lastWord = '9'
                     return True
             elif not index_up and not middle_up and not ring_up and not pinky_up and thumb_up:
                 if represents_int(lastWord):
                     if int(lastWord) != 10:
-                        print "10"
-                        lastWord = "10"
+                        print '10'
+                        player('ten')
+                        lastWord = '10'
                         return True
                 else:
-                    print "10"
-                    lastWord = "10"
+                    print '10'
+                    player('ten')
+                    lastWord = '10'
                     return True
     return False
 
@@ -442,7 +425,7 @@ class LeapMotionListener(Leap.Listener):
                     if not cold(frame):
                         if not mom_grandma_dad_grandpa(frame):
                             number(frame)
-                            time.sleep(.7)
+                            time.sleep(0.7)
 
 
 def main():
