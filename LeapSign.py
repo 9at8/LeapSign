@@ -9,7 +9,7 @@ TYPE_INDEX = TYPE_PROXIMAL = 1
 TYPE_MIDDLE = TYPE_INTERMEDIATE = 2
 TYPE_RING = TYPE_DISTAL = 3
 
-lastWord = None
+lastWord = -1
 
 
 def player(file):
@@ -131,59 +131,59 @@ def love(frame):
     return False
 
 
-def mom_grandma_dad_grandpa(frame):
-    global lastWord
-    for hand in frame.hands:
-        if hand.sphere_radius > 80:
-            hand_chirality = 1 if hand.is_right else -1
-            if Leap.PI / 6 < hand.direction.pitch < Leap.PI / 3:
-                if -2 * Leap.PI / 3 < hand_chirality * hand.palm_normal.roll < -Leap.PI / 3:
-                    for gesture in frame.gestures():
-                        if gesture.type == Leap.Gesture.TYPE_CIRCLE:
-                            circle = CircleGesture(gesture)
-                            if (circle.pointable.direction.angle_to(
-                                    circle.normal) <= Leap.PI / 2) if hand_chirality == -1 else not (
-                                        circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2):  # clockwise
-                                if circle.state != Leap.Gesture.STATE_START:
-                                    if circle.progress >= .75:
-                                        if lastWord != 'grandma':
-                                            print 'grandma'
-                                            player('grandma')
-                                            lastWord = 'grandma'
-                                            return True
-                    if lastWord != 'mom':
-                        print 'mom'
-                        player('mom')
-                        lastWord = 'mom'
-                        return True
-            if Leap.PI / 3 < hand.direction.pitch < 2 * Leap.PI / 3:
-                if -2 * Leap.PI / 3 < hand_chirality * hand.palm_normal.roll < -Leap.PI / 3:
-                    for gesture in frame.gestures():
-                        if gesture.type == Leap.Gesture.TYPE_CIRCLE:
-                            circle = CircleGesture(gesture)
-                            if (circle.pointable.direction.angle_to(
-                                    circle.normal) <= Leap.PI / 2) if hand_chirality == -1 else not (
-                                        circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2):  # clockwise
-                                if circle.state != Leap.Gesture.STATE_START:
-                                    if circle.progress >= .75:
-                                        if lastWord != 'grandpa':
-                                            print 'grandpa'
-                                            player('grandpa')
-                                            lastWord = 'grandpa'
-                                            return True
-                    if lastWord != 'dad':
-                        print 'dad'
-                        player('dad')
-                        lastWord = 'dad'
-                        return True
-        return False
+# def mom_grandma_dad_grandpa(frame):
+#     global lastWord
+#     for hand in frame.hands:
+#         if hand.sphere_radius > 80:
+#             hand_chirality = 1 if hand.is_right else -1
+#             if Leap.PI / 6 < hand.direction.pitch < Leap.PI / 3:
+#                 if -2 * Leap.PI / 3 < hand_chirality * hand.palm_normal.roll < -Leap.PI / 3:
+#                     for gesture in frame.gestures():
+#                         if gesture.type == Leap.Gesture.TYPE_CIRCLE:
+#                             circle = CircleGesture(gesture)
+#                             if (circle.pointable.direction.angle_to(
+#                                     circle.normal) <= Leap.PI / 2) if hand_chirality == -1 else not (
+#                                         circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2):  # clockwise
+#                                 if circle.state != Leap.Gesture.STATE_START:
+#                                     if circle.progress >= .75:
+#                                         if lastWord != 'grandma':
+#                                             print 'grandma'
+#                                             player('grandma')
+#                                             lastWord = 'grandma'
+#                                             return True
+#                     if lastWord != 'mom':
+#                         print 'mom'
+#                         player('mom')
+#                         lastWord = 'mom'
+#                         return True
+#             if Leap.PI / 3 < hand.direction.pitch < 2 * Leap.PI / 3:
+#                 if -2 * Leap.PI / 3 < hand_chirality * hand.palm_normal.roll < -Leap.PI / 3:
+#                     for gesture in frame.gestures():
+#                         if gesture.type == Leap.Gesture.TYPE_CIRCLE:
+#                             circle = CircleGesture(gesture)
+#                             if (circle.pointable.direction.angle_to(
+#                                     circle.normal) <= Leap.PI / 2) if hand_chirality == -1 else not (
+#                                         circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2):  # clockwise
+#                                 if circle.state != Leap.Gesture.STATE_START:
+#                                     if circle.progress >= .75:
+#                                         if lastWord != 'grandpa':
+#                                             print 'grandpa'
+#                                             player('grandpa')
+#                                             lastWord = 'grandpa'
+#                                             return True
+#                     if lastWord != 'dad':
+#                         print 'dad'
+#                         player('dad')
+#                         lastWord = 'dad'
+#                         return True
+#         return False
 
 
 def represents_int(s):
     try:
         int(s)
         return True
-    except ValueError:
+    except ValueError or TypeError:
         return False
 
 
@@ -409,24 +409,28 @@ class LeapMotionListener(Leap.Listener):
         global lastWord
         frame = controller.frame()
 
-        if lastWord != 'please':
-            please(frame)
+        time.sleep(0.5)
 
-        if lastWord != 'house':
-            house(frame)
+        #
+        #
+        # number(frame)
 
-        if lastWord != 'cold':
-            cold(frame)
+        if not (cold(frame) or house(frame) or love(frame) or please(frame)):
+            number(frame)
+        else:
+            if lastWord != 'please':
+                please(frame)
 
-        if lastWord != 'love':
-            love(frame)
-        if not please(frame):
-            if not house(frame):
-                if not love(frame):
-                    if not cold(frame):
-                        if not mom_grandma_dad_grandpa(frame):
-                            number(frame)
-                            time.sleep(0.7)
+            if lastWord != 'house':
+                house(frame)
+
+            if lastWord != 'cold':
+                cold(frame)
+
+            if lastWord != 'love':
+                love(frame)
+
+
 
 
 def main():
