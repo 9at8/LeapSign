@@ -28,8 +28,6 @@ def please(frame):
                                     if circle.progress >= 1.75:
                                         lastWord = "please"
                                         print 'please'
-                                        return
-
 
 def house(frame):
     global lastWord
@@ -80,6 +78,38 @@ def cold(frame):
             print 'cold'
 
 
+def day(frame):
+    global lastWord
+    lefthand = False;
+    righthand = False; 
+    if(frame.hands==2):
+        lefthand = True
+        righthand = True
+    for hand in frame.hands:
+        if hand.is_left:
+            if (abs(hand.palm_normal.roll * Leap.RAD_TO_DEG) >=150 and hand.direction.roll * Leap.RAD_TO_DEG >=60 and hand.direction.roll * Leap.RAD_TO_DEG<=120)==False:
+                lefthand = False
+            else:
+#                print "LEFT OK"
+                lefthand = True
+        else:
+            for gesture in frame.gestures():
+                if gesture.type == Leap.Gesture.TYPE_SWIPE:
+                    swipe = SwipeGesture(gesture)
+                    if (swipe.state != Leap.Gesture.STATE_START):
+#                        print str(swipe.direction.yaw * Leap.RAD_TO_DEG) + " " + str(swipe.direction.roll * Leap.RAD_TO_DEG)
+                        if (swipe.direction.yaw * Leap.RAD_TO_DEG >= 45 and swipe.direction.yaw * Leap.RAD_TO_DEG <= 135 and swipe.direction.roll * Leap.RAD_TO_DEG >= 90 and swipe.direction.roll * Leap.RAD_TO_DEG <= 180) == False:
+                            righthand= False
+                        else:
+#                            print "RIGHT OK"
+                            righthand=True
+    if(lefthand and righthand):
+        print "day "
+        lastWord = "day"
+
+
+
+
 class LeapMotionListener(Leap.Listener):
     finger_names = ['Thumb', 'Index', 'Middle', 'Ring', 'Pinky']
     bone_names = ['Metacarpal', 'Proximal', 'Intermediate', 'Distal']
@@ -122,7 +152,9 @@ class LeapMotionListener(Leap.Listener):
         if lastWord != 'cold':
             cold(frame)
 
-        # frame = controller.frame()
+        if lastWord != 'day':
+            day(frame)
+        #frame = controller.frame()
 
         """
         print "Frame ID: " + str(frame.id) \
@@ -195,7 +227,7 @@ class LeapMotionListener(Leap.Listener):
                 if gesture.type == Leap.Gesture.TYPE_SWIPE:
                     swipe = SwipeGesture(gesture)
                     #print "Swipe ID: " + str(swipe.id) + " State: " + self.state_names[gesture.state] + " Position: " + str(swipe.position) + " Direction:" + str(swipe.direction) + " Swipe: (mm/s): " + str(swipe.speed)
-                    """
+        """
 
 
 def main():
