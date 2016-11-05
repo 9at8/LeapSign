@@ -26,8 +26,8 @@ def please(frame):
                                 # print "\n4"
                                 if hand.direction.yaw * Leap.RAD_TO_DEG >= -115 and hand.direction.yaw * Leap.RAD_TO_DEG <= -65:
                                     if circle.progress >= 1.75:
-                                        print "please"
                                         lastWord = "please"
+                                        print 'please'
                                         return
 
 
@@ -52,11 +52,32 @@ def house(frame):
             else:
                 house[1] = False
 
-        time.sleep(0.3)
-
         if house[0] and house[1]:
-            print 'house'
             lastWord = 'house'
+            print 'house'
+
+def cold(frame):
+    global lastWord
+    cold = [False, False]
+
+    for hand in frame.hands:
+
+        normal = hand.palm_normal
+        strength = hand.grab_strength
+
+        if hand.is_left and strength > 0.9:
+            if 110 >= (normal.roll * Leap.RAD_TO_DEG) >= 70:
+                cold[0] = True
+            else:
+                cold[0] = False
+        elif hand.is_right and strength > 0.9:
+            if -110 <= (normal.roll * Leap.RAD_TO_DEG) <= -70:
+                cold[1] = True
+            else:
+                cold[1] = False
+        if cold[0] and cold[1]:
+            lastWord = 'cold'
+            print 'cold'
 
 
 class LeapMotionListener(Leap.Listener):
@@ -89,12 +110,18 @@ class LeapMotionListener(Leap.Listener):
         global lastWord
         # print lastWord
         frame = controller.frame()
+
+        time.sleep(0.2)
+
         if lastWord != "please":
             please(frame)
 
         if lastWord != "house":
             house(frame)
-        # lastWord = ""
+
+        if lastWord != 'cold':
+            cold(frame)
+
         # frame = controller.frame()
 
         """
