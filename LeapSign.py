@@ -184,6 +184,8 @@ def love(frame):
 
 def mom_grandma_dad_grandpa(frame):
     global lastWord
+    if len(frame.hands) != 1:
+        return False
     for hand in frame.hands:
         if hand.sphere_radius > 80:
             hand_chirality = 1 if hand.is_right else -1
