@@ -155,7 +155,7 @@ def hello (frame):
 						print "hello"
 						lastWord = 'hello'
 					
-
+'''
 def body (frame): 
 	global lastWord 
 	for hand in frame.hands: 
@@ -169,7 +169,7 @@ def body (frame):
 				if gesture.type == Leap.Gesture.TYPE_SWIPE: 
 					swipe = SwipeGesture(gesture)
 					if (swipe.state != Leap.Gesture.STATE_START):
-						print str(swipe.direction.roll * Leap.RAD_TO_DEG) + " " + str(swipe.direction.pitch * Leap.RAD_TO_DEG)
+						print swipe.direction.roll * Leap.RAD_TO_DEG
 						if (swipe.direction.roll * Leap.RAD_TO_DEG <= -100 and swipe.direction.roll * Leap.RAD_TO_DEG >= -180 and abs(swipe.direction.pitch * Leap.RAD_TO_DEG - 90) < 30 ) == True:
 							wordleft = True 
 							print "bodyleft" 
@@ -185,7 +185,7 @@ def body (frame):
 		if (wordright and wordleft) == True:
 			print "body"
 			lastWord = "body"
-'''
+
 
 def thankyou(frame):
 	global lastWord
@@ -278,6 +278,7 @@ class LeapMotionListener(Leap.Listener):
 			love(frame)
 
 		thankyou(frame)
+		body(frame)
 
 def main():
 	listener = LeapMotionListener()
