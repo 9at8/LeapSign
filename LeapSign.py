@@ -91,7 +91,7 @@ def day(frame):
                                     (swipe.direction.roll * Leap.RAD_TO_DEG <= 180)
     if lefthand and righthand and lastWord != 'day':
         print 'day'
-        # player('day')
+        player('day')
         lastWord = 'day'
         return True
     return False
