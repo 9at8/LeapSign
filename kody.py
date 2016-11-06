@@ -11,6 +11,7 @@ finger_names = ['Thumb', 'Index', 'Middle', 'Ring', 'Pinky']
 bone_names = ['Metacarpal', 'Proximal', 'Intermediate', 'Distal']
 """
 
+"""
 def but(frame):
     global lastWord
     lhand = rhand = False
@@ -18,7 +19,7 @@ def but(frame):
         for gesture in frame.gestures():
             if gesture.type == Leap.Gesture.TYPE_SWIPE:
                 swipe = SwipeGesture(gesture)
-
+"""
 
 
 def hi(frame):
