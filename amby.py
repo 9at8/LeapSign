@@ -1,16 +1,17 @@
 import Leap, sys, thread, time
 from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
-lastWord = "lol"
+lastWord = ""
 TYPE_THUMB=TYPE_METACARPAL=0;
 TYPE_INDEX=TYPE_PROXIMAL=1
 TYPE_MIDDLE=TYPE_INTERMEDIATE=2
 TYPE_RING=TYPE_DISTAL=3
+TYPE_PINKY=4
 def RepresentsInt(s):
     try:
         int(s)
-        return True
-    except ValueError:
+    except:
         return False
+    return True
 
 def mom_grandma_dad_grandpa(frame):
     global lastWord
@@ -24,7 +25,7 @@ def mom_grandma_dad_grandpa(frame):
                             circle = CircleGesture(gesture)
                             if (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2) if handChirality == -1 else not (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2): #clockwise
                                 if circle.state != Leap.Gesture.STATE_START:
-                                    if circle.progress >= .75:
+                                    if circle.progress >= 1.75:
                                         if lastWord != "grandma":
                                             print "grandma"
                                             lastWord = "grandma"
@@ -40,7 +41,7 @@ def mom_grandma_dad_grandpa(frame):
                             circle = CircleGesture(gesture)
                             if (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2) if handChirality == -1 else not (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2): #clockwise
                                 if circle.state != Leap.Gesture.STATE_START:
-                                    if circle.progress >= .75:
+                                    if circle.progress >= 1.75:
                                         if lastWord != "grandpa":
                                             print "grandpa"
                                             lastWord = "grandpa"
@@ -164,7 +165,7 @@ def number(frame):
                     print "0"
                     lastWord = "0"
                     return True
-            if index_up and not middle_up and not ring_up and not pinky_up and not thumb_up:
+            elif index_up and not middle_up and not ring_up and not pinky_up and not thumb_up:
                 if RepresentsInt(lastWord):
                     if int(lastWord) != 1:
                         print "1"
@@ -266,33 +267,32 @@ def number(frame):
                     return True
     return False
 
+#def yes
 def no(controller):
     global lastWord
-    if lastWord == 'no':
+    frame = controller.frame()
+    past = 1
+    last_frame = controller.frame(past)
+    if not last_frame.is_valid:
         return False
-    frame = controller.frame
-    past = frame.current_frames_per_second//2
-    next_pinch_strength=1.0
-    new_frame=controller.frame(1)
-    while new_frame.is_valid and controller.frame(past) < new_frame:
-        for hand in new_frame.hands:
-            for finger in hand.fingers:
-                if finger.type==TYPE_RING or finger.type == TYPE_PINKY:
-                    for i in xrange(0,4):
-                        bone=finger.bone(i)
-                        if bone.type==TYPE_DISTAL:
-                            if bone.direction.angle_to(hand.direction) > 1:
-                                return False
+    while last_frame.is_valid:
+        pinch = None
+        last_pinch = None
+        for hand in frame.hands:
             pinch = hand.pinch_strength
-            if pinch > next_pinch_strength:
-                return False
-            else:
-                next_pinch_strength=pinch
-        new_frame = controller.new_frame(1)
-    print 'no'
-    lastWord = 'no'
-    return True
-
+        for hand in last_frame.hands:
+            last_pinch = hand.pinch_strength
+        if pinch > last_pinch:
+            break
+        past +=1
+        last_frame = controller.frame(past)
+    if past < frame.current_frames_per_second:
+        if lastWord != "no":
+            print "no"
+            lastWord = "no"
+            return True
+        else:
+            return False
 
 class LeapMotionListener(Leap.Listener):
     finger_names = ['Thumb', 'Index', 'Middle', 'Ring', 'pinky']
@@ -318,12 +318,11 @@ class LeapMotionListener(Leap.Listener):
 
     def on_frame(self, controller):
         frame = controller.frame()
-        '''if not mom_grandma_dad_grandpa(frame):
+        if not mom_grandma_dad_grandpa(frame):
             number(frame)
-            time.sleep(.7)'''
-        #no(controller)
+                #no(controller)
         #cross_fingers(frame)
-        number(frame)
+        #number(frame)
 def main():
     listener = LeapMotionListener()
     controller = Leap.Controller()
