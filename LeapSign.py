@@ -48,10 +48,11 @@ def but(frame):
         for gesture in frame.gestures():
             if gesture.type == Leap.Gesture.TYPE_SWIPE:
                 swipe = SwipeGesture(gesture)
-                if abs(swipe.direction.yaw * Leap.RAD_TO_DEG - 90) <= 30 and abs(swipe.direction.roll * Leap.RAD_TO_DEG - 90) <= 30:
+#                print str(swipe.direction.yaw * Leap.RAD_TO_DEG) + " " + str(swipe.direction.roll * Leap.RAD_TO_DEG)
+                if abs(swipe.direction.yaw * Leap.RAD_TO_DEG - 90) <= 35 and abs(swipe.direction.roll * Leap.RAD_TO_DEG - 90) <= 35:
                     lhand = True
 #                    print "Left ok !"
-                if abs(swipe.direction.yaw * Leap.RAD_TO_DEG + 90) <= 30 and abs(swipe.direction.roll * Leap.RAD_TO_DEG + 90) <= 30:
+                if abs(swipe.direction.yaw * Leap.RAD_TO_DEG + 90) <= 35 and abs(swipe.direction.roll * Leap.RAD_TO_DEG + 90) <= 35:
                     rhand = True
 #                    print "Right ok !"
     if lhand and rhand:
@@ -186,6 +187,28 @@ def house(frame):
                 return True
     return False
 
+def judges(frame):
+    global lastWord
+    if lastWord == "judges":
+        return False;
+    lhand = rhand = False
+    if len(frame.hands) == 2:
+        for hand in frame.hands:
+            for gesture in frame.gestures():
+                if gesture.type == Leap.Gesture.TYPE_SWIPE:
+                    swipe = SwipeGesture(gesture)
+    #                print str(swipe.direction.pitch * Leap.RAD_TO_DEG) + " " + str(swipe.direction.roll * Leap.RAD_TO_DEG)
+                    if abs(abs(swipe.direction.pitch * Leap.RAD_TO_DEG)-90) <= 20 and abs(abs(swipe.direction.roll * Leap.RAD_TO_DEG)-180) <= 20 and hand.pinch_strength == 1 and hand.is_right == True:
+                        lhand = True
+    #                    print "Left ok !"
+                    if abs(swipe.direction.pitch * Leap.RAD_TO_DEG + 90) <= 20 and abs(swipe.direction.roll * Leap.RAD_TO_DEG) <= 20 and hand.pinch_strength ==1 and hand.is_left == True:
+                        rhand = True
+    #                    print "Right ok !"
+    if lhand and rhand:
+        lastWord = "judges"
+        print "judges"
+        return True
+    return False
 
 def love(frame):
     global lastWord
@@ -251,6 +274,20 @@ def mom_grandma_dad_grandpa(frame):
                 handChirality = 1 if hand.is_right else -1
                 if hand.palm_normal.angle_to(Leap.Vector(-1,0,0)) < Leap.PI/6 if handChirality==1 else hand.palm_normal.angle_to(Leap.Vector(1,0,0)) < Leap.PI/6:
                     if Leap.PI/6 < hand.direction.angle_to(Leap.Vector(0,0,-1)) < 3*Leap.PI/8:
+                        for gesture in frame.gestures():
+                            if gesture.type == Leap.Gesture.TYPE_CIRCLE:
+                                circle = CircleGesture(gesture)
+                                if (circle.pointable.direction.angle_to(
+                                        circle.normal) <= Leap.PI / 2) if handChirality == -1 else not (
+                                    circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2):  # clockwise
+                                    if circle.state != Leap.Gesture.STATE_START:
+                                        if circle.progress >= 1.25:
+                                            if lastWord != "grandma":
+                                                time.sleep(0.5)
+                                                print "grandma"
+                                                player('grandma')
+                                                lastWord = "grandma"
+                                                return True
                         if lastWord != "mom":
                             time.sleep(0.5)
                             print "mom"
@@ -258,6 +295,19 @@ def mom_grandma_dad_grandpa(frame):
                             lastWord = "mom"
                             return True
                     if 5*Leap.PI/12 < hand.direction.angle_to(Leap.Vector(0,0,-1)) < 2*Leap.PI/3:
+                        for gesture in frame.gestures():
+                            if gesture.type == Leap.Gesture.TYPE_CIRCLE:
+                                circle = CircleGesture(gesture)
+                                if (circle.pointable.direction.angle_to(
+                                        circle.normal) <= Leap.PI / 2) if handChirality == -1 else not (
+                                    circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2):  # clockwise
+                                    if circle.state != Leap.Gesture.STATE_START:
+                                        if circle.progress >= 1.25:
+                                            if lastWord != "grandpa":
+                                                print "grandpa"
+                                                player('grandpa')
+                                                lastWord = "grandpa"
+                                                return True
                         if lastWord != "dad":
                             print "dad"
                             player('dad')
@@ -625,7 +675,7 @@ class LeapMotionListener(Leap.Listener):
         global lastWord
         frame = controller.frame()
 
-        time.sleep(0.3)
+        time.sleep(0.2)
 
         # if not (cold(frame) or house(frame) or love(frame) or please(frame) or mom_grandma_dad_grandpa(frame)):
         #     number(frame)
@@ -642,7 +692,7 @@ class LeapMotionListener(Leap.Listener):
         #     if lastWord != 'love':
         #         love(frame)
 
-        area(frame) or but(frame) or can(frame) or cold(frame) or day(frame) or hi(frame) or house(frame) or love(frame) \
+        area(frame) or but(frame) or can(frame) or cold(frame) or day(frame) or hi(frame) or house(frame) or judges(frame) or love(frame) \
         or mom_grandma_dad_grandpa(frame) or please(frame) or strong(frame) or what(frame) or yes(frame) or you(frame)
 
 
