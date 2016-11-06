@@ -10,6 +10,24 @@ Pitch: -Z on Y-Z plane
 finger_names = ['Thumb', 'Index', 'Middle', 'Ring', 'Pinky']
 bone_names = ['Metacarpal', 'Proximal', 'Intermediate', 'Distal']
 """
+def hi(frame):
+    global lastWord
+    righthand = False 
+
+    for hand in frame.hands:
+        if len(frame.hands)==1:
+            if hand.is_right:
+                for gesture in frame.gestures():
+                    if gesture.type == Leap.Gesture.TYPE_SWIPE:
+                        swipe = SwipeGesture(gesture)
+                        if (swipe.state != Leap.Gesture.STATE_START):
+    #                        print str(swipe.direction.yaw * Leap.RAD_TO_DEG) + " " + str(swipe.direction.roll * Leap.RAD_TO_DEG)
+                            righthand = (abs(swipe.direction.yaw * Leap.RAD_TO_DEG -90) <= 30 and abs(swipe.direction.roll * Leap.RAD_TO_DEG -90) <= 30)
+    if righthand:
+        print "hi "
+        lastWord = "hi"
+
+
 """
 def no(frame):
     global lastWord
@@ -29,20 +47,32 @@ def no(frame):
         lastWord = "no"
 """
 
-"""
+
 def you(frame):
     global lastWord 
-    f = [
-    frame = controller.frame()
-    last_frame = controller.frame(5)
+    f = [False,False,False,False,False]
     for hand in frame.hands:
-        for finger in hand.fingers:
-            if finger.type == 1:
-                for bone in finger.bones:
-                    if bone.type == 4:
-                        if abs(bone.direction.yaw) * Leap.DEG_TO_RAD < 30 and abs(bone.direction.pitch) * Leap.DEG_TO_RAD < 30:
+        if hand.is_right and len(frame.hands)==1:
+            for finger in hand.fingers:
+                if finger.type == 1:
+                    for b in range (0,4):
+                        bone = finger.bone(b)
+                        if bone.type == 3:
+#                            print "INDEX: " + str(bone.direction.yaw * Leap.RAD_TO_DEG) + " " + str(bone.direction.pitch * Leap.RAD_TO_DEG)
+                            if abs(bone.direction.yaw * Leap.RAD_TO_DEG - 135) < 30 and abs(bone.direction.pitch * Leap.RAD_TO_DEG + 165) < 30:
+                                f[1] = True
+                elif finger.type != 0:
+                    for b in range (0,4):
+                        bone = finger.bone(b) 
+                        if bone.type == 1:
+#                            print str(bone.direction.yaw * Leap.RAD_TO_DEG) + " " + str(bone.direction.pitch * Leap.RAD_TO_DEG)
+                            if abs(bone.direction.yaw * Leap.RAD_TO_DEG - 90) < 30 and abs(bone.direction.pitch * Leap.RAD_TO_DEG + 90) < 30:
+                                f[finger.type] = True 
+    if f[1] and f[2] and f[3] and f[4]:
+        print "you"
+        lastWord = "you"
+                
 
-"""
 
 def what(frame):
     global lastWord
@@ -231,8 +261,8 @@ def cold(frame):
 
 def day(frame):
     global lastWord
-    lefthand = False;
-    righthand = False; 
+    lefthand = False
+    righthand = False 
     if(frame.hands==2):
         lefthand = True
         righthand = True
@@ -309,6 +339,13 @@ class LeapMotionListener(Leap.Listener):
 
         if lastWord != 'what':
             what(frame)
+
+        if lastWord != "you":
+            you(frame)
+
+        if lastWord != "hi":
+            hi(frame)
+
         """
         for gesture in frame.gestures():
 
