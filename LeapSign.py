@@ -90,12 +90,12 @@ def cold(frame):
         strength = hand.grab_strength
 
         if hand.is_left and strength == 1:
-            if 110 >= (normal.roll * Leap.RAD_TO_DEG) >= 70 and abs(hand.direction.pitch * Leap.RAD_TO_DEG) <=20:
+            if 110 >= (normal.roll * Leap.RAD_TO_DEG) >= 70 and abs(hand.direction.pitch * Leap.RAD_TO_DEG) <=30:
                 cold[0] = True
             else:
                 cold[0] = False
         elif hand.is_right and strength == 1:
-            if -110 <= (normal.roll * Leap.RAD_TO_DEG) <= -70  and abs(hand.direction.pitch * Leap.RAD_TO_DEG) <=20:
+            if -110 <= (normal.roll * Leap.RAD_TO_DEG) <= -70  and abs(hand.direction.pitch * Leap.RAD_TO_DEG) <=30:
                 cold[1] = True
             else:
                 cold[1] = False
@@ -104,6 +104,7 @@ def cold(frame):
                 lastWord = 'cold'
                 print 'cold'
                 player('cold')
+                time.sleep(0.5)
                 return True
     return False
 
@@ -274,6 +275,7 @@ def mom_grandma_dad_grandpa(frame):
                 handChirality = 1 if hand.is_right else -1
                 if hand.palm_normal.angle_to(Leap.Vector(-1,0,0)) < Leap.PI/6 if handChirality==1 else hand.palm_normal.angle_to(Leap.Vector(1,0,0)) < Leap.PI/6:
                     if Leap.PI/6 < hand.direction.angle_to(Leap.Vector(0,0,-1)) < 3*Leap.PI/8:
+                        """
                         for gesture in frame.gestures():
                             if gesture.type == Leap.Gesture.TYPE_CIRCLE:
                                 circle = CircleGesture(gesture)
@@ -288,13 +290,16 @@ def mom_grandma_dad_grandpa(frame):
                                                 player('grandma')
                                                 lastWord = "grandma"
                                                 return True
+                        """
                         if lastWord != "mom":
                             time.sleep(0.5)
                             print "mom"
                             player('mom')
                             lastWord = "mom"
+                            time.sleep(0.25)
                             return True
                     if 5*Leap.PI/12 < hand.direction.angle_to(Leap.Vector(0,0,-1)) < 2*Leap.PI/3:
+                        """
                         for gesture in frame.gestures():
                             if gesture.type == Leap.Gesture.TYPE_CIRCLE:
                                 circle = CircleGesture(gesture)
@@ -308,10 +313,12 @@ def mom_grandma_dad_grandpa(frame):
                                                 player('grandpa')
                                                 lastWord = "grandpa"
                                                 return True
+                        """
                         if lastWord != "dad":
                             print "dad"
                             player('dad')
                             lastWord = "dad"
+                            time.sleep(0.25)
                             return True
         return False
 
@@ -550,6 +557,7 @@ def strong(frame):
                 lastWord = 'strong'
                 print 'strong'
                 player('strong')
+                time.sleep(0.5)
                 return True
     return False
 
@@ -557,16 +565,17 @@ def thankyou(frame):
     global lastWord
     if lastWord == "thank you":
         return False
-    for hand in frame.hands:
-        if hand.is_right:
-            for gesture in frame.gestures():
-                if gesture.type == Leap.Gesture.TYPE_SWIPE:
-                    swipe = SwipeGesture(gesture)
-                    if swipe.state != Leap.Gesture.STATE_START:
-                        if swipe.direction.pitch * Leap.RAD_TO_DEG <= 0 and swipe.direction.pitch * Leap.RAD_TO_DEG >= -120 and abs(swipe.direction.yaw * Leap.RAD_TO_DEG) <= 20:
-                            if abs(hand.palm_normal.roll * Leap.RAD_TO_DEG) <= 180 and abs(hand.palm_normal.roll * Leap.RAD_TO_DEG) >= 130 and lastWord != "thank you":
-                                print "thank you"
-                                lastWord = "thank you"
+    if len(frame.hands) == 1:
+        for hand in frame.hands:
+            if hand.is_right:
+                for gesture in frame.gestures():
+                    if gesture.type == Leap.Gesture.TYPE_SWIPE:
+                        swipe = SwipeGesture(gesture)
+                        if swipe.state != Leap.Gesture.STATE_START:
+                            if swipe.direction.pitch * Leap.RAD_TO_DEG <= 0 and swipe.direction.pitch * Leap.RAD_TO_DEG >= -120 and abs(swipe.direction.yaw * Leap.RAD_TO_DEG) <= 20:
+                                if abs(hand.palm_normal.roll * Leap.RAD_TO_DEG) <= 180 and abs(hand.palm_normal.roll * Leap.RAD_TO_DEG) >= 130 and lastWord != "thank you":
+                                    print "thank you"
+                                    lastWord = "thank you"
 
 def what(frame):
     global lastWord
@@ -688,7 +697,7 @@ class LeapMotionListener(Leap.Listener):
         global lastWord
         frame = controller.frame()
 
-        time.sleep(0.2)
+        time.sleep(0.1)
 
         # if not (cold(frame) or house(frame) or love(frame) or please(frame) or mom_grandma_dad_grandpa(frame)):
         #     number(frame)
