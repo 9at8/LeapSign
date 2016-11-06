@@ -11,6 +11,16 @@ finger_names = ['Thumb', 'Index', 'Middle', 'Ring', 'Pinky']
 bone_names = ['Metacarpal', 'Proximal', 'Intermediate', 'Distal']
 """
 
+def but(frame):
+    global lastWord
+    lhand = rhand = False
+    if len(frame.hands) == 2:
+        for gesture in frame.gestures():
+            if gesture.type == Leap.Gesture.TYPE_SWIPE:
+                swipe = SwipeGesture(gesture)
+
+
+
 def hi(frame):
     global lastWord
     righthand = False 
@@ -91,9 +101,9 @@ def what(frame):
 #            print hand.palm_normal.pitch * Leap.RAD_TO_DEG
             if abs(hand.palm_normal.pitch * Leap.RAD_TO_DEG - 90) < 30:
 #                print "\n2"
-                if hand.is_left:
+                if hand.is_left and hand.grab_strength == 0:
                     lhand = True
-                if hand.is_right:
+                if hand.is_right and hand.grab_strength == 0:
                     rhand = True
     if lhand and rhand:
         lastWord = "what"
@@ -162,11 +172,17 @@ def please(frame):
             if gesture.type == Leap.Gesture.TYPE_CIRCLE:
                 circle = CircleGesture(gesture)
                 if (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2) == False:
+#                    print "1"
                     if hand.is_right:
+#                        print "2"
                         if circle.state != Leap.Gesture.STATE_START:
+#                            print "3"
                             if hand.palm_normal.roll * Leap.RAD_TO_DEG <= -65 and hand.palm_normal.roll * Leap.RAD_TO_DEG >= -115:
-                                if hand.direction.yaw * Leap.RAD_TO_DEG >= -115 and hand.direction.yaw * Leap.RAD_TO_DEG <= -65:
-                                    if circle.progress >= 1.75:
+#                                print "4"
+#                                print hand.direction.yaw * Leap.RAD_TO_DEG
+                                if abs(hand.direction.yaw * Leap.RAD_TO_DEG +65 ) <= 30:
+#                                    print "5"
+                                    if circle.progress >= 1.5:
                                         if lastWord != 'please':
                                             lastWord = 'please'
                                             print 'please'

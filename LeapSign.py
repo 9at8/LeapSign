@@ -448,7 +448,7 @@ def please(frame):
                     if hand.is_right:
                         if circle.state != Leap.Gesture.STATE_START:
                             if hand.palm_normal.roll * Leap.RAD_TO_DEG <= -65 and hand.palm_normal.roll * Leap.RAD_TO_DEG >= -115:
-                                if hand.direction.yaw * Leap.RAD_TO_DEG >= -115 and hand.direction.yaw * Leap.RAD_TO_DEG <= -65:
+                                if abs(hand.direction.yaw * Leap.RAD_TO_DEG +65 ) <= 30:
                                     if circle.progress >= 1.75:
                                         if lastWord != 'please':
                                             lastWord = 'please'
@@ -496,9 +496,9 @@ def what(frame):
     for hand in frame.hands:
         if abs(hand.palm_normal.roll) * Leap.RAD_TO_DEG > 150:
             if abs(hand.palm_normal.pitch * Leap.RAD_TO_DEG - 90) < 30:
-                if hand.is_left:
+                if hand.is_left and hand.grab_strength == 0:
                     lhand = True
-                if hand.is_right:
+                if hand.is_right and hand.grab_strength == 0:
                     rhand = True
     if lhand and rhand and lastWord != 'what':
         print 'what'
