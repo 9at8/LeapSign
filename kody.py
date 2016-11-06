@@ -10,6 +10,24 @@ Pitch: -Z on Y-Z plane
 finger_names = ['Thumb', 'Index', 'Middle', 'Ring', 'Pinky']
 bone_names = ['Metacarpal', 'Proximal', 'Intermediate', 'Distal']
 """
+def hi(frame):
+    global lastWord
+    righthand = False 
+
+    for hand in frame.hands:
+        if len(frame.hands)==1:
+            if hand.is_right:
+                for gesture in frame.gestures():
+                    if gesture.type == Leap.Gesture.TYPE_SWIPE:
+                        swipe = SwipeGesture(gesture)
+                        if (swipe.state != Leap.Gesture.STATE_START):
+    #                        print str(swipe.direction.yaw * Leap.RAD_TO_DEG) + " " + str(swipe.direction.roll * Leap.RAD_TO_DEG)
+                            righthand = (abs(swipe.direction.yaw * Leap.RAD_TO_DEG -90) <= 30 and abs(swipe.direction.roll * Leap.RAD_TO_DEG -90) <= 30)
+    if righthand:
+        print "hi "
+        lastWord = "hi"
+
+
 """
 def no(frame):
     global lastWord
@@ -324,6 +342,10 @@ class LeapMotionListener(Leap.Listener):
 
         if lastWord != "you":
             you(frame)
+
+        if lastWord != "hi":
+            hi(frame)
+
         """
         for gesture in frame.gestures():
 
