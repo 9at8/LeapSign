@@ -53,7 +53,7 @@ def can(frame):
             if hand0.palm_velocity.magnitude > 700 and hand1.palm_velocity.magnitude > 700:
                 time.sleep(0.5)
                 print "can"
-                play('can')
+                player('can')
                 lastWord = "can"
                 return True
     return False
@@ -69,12 +69,12 @@ def cold(frame):
         strength = hand.grab_strength
 
         if hand.is_left and strength == 1:
-            if 110 >= (normal.roll * Leap.RAD_TO_DEG) >= 70:
+            if 110 >= (normal.roll * Leap.RAD_TO_DEG) >= 70 and abs(hand.direction.pitch * Leap.RAD_TO_DEG) <=20:
                 cold[0] = True
             else:
                 cold[0] = False
         elif hand.is_right and strength == 1:
-            if -110 <= (normal.roll * Leap.RAD_TO_DEG) <= -70:
+            if -110 <= (normal.roll * Leap.RAD_TO_DEG) <= -70  and abs(hand.direction.pitch * Leap.RAD_TO_DEG) <=20:
                 cold[1] = True
             else:
                 cold[1] = False
@@ -104,10 +104,9 @@ def day(frame):
                 if gesture.type == Leap.Gesture.TYPE_SWIPE:
                     swipe = SwipeGesture(gesture)
                     if swipe.state != Leap.Gesture.STATE_START:
-                        righthand = (swipe.direction.yaw * Leap.RAD_TO_DEG >= 45) and \
-                                    (swipe.direction.yaw * Leap.RAD_TO_DEG <= 135) and \
-                                    (swipe.direction.roll * Leap.RAD_TO_DEG >= 90) and \
-                                    (swipe.direction.roll * Leap.RAD_TO_DEG <= 180)
+                        print str(swipe.direction.yaw * Leap.RAD_TO_DEG) + " " + str(swipe.direction.roll * Leap.RAD_TO_DEG)
+                        righthand = abs(swipe.direction.yaw * Leap.RAD_TO_DEG - 90) <= 50 and \
+                                    abs(swipe.direction.roll * Leap.RAD_TO_DEG - 130) <= 50
     if lefthand and righthand and lastWord != 'day':
         print 'day'
         player('day')
@@ -244,13 +243,13 @@ def mom_grandma_dad_grandpa(frame):
                                         if lastWord != "grandma":
                                             time.sleep(0.5)
                                             print "grandma"
-                                            play('grandma')
+                                            player('grandma')
                                             lastWord = "grandma"
                                             return True
                     if lastWord != "mom":
                         time.sleep(0.5)
                         print "mom"
-                        play('mom')
+                        player('mom')
                         lastWord = "mom"
                         return True
                 if 5*Leap.PI/12 < hand.direction.angle_to(Leap.Vector(0,0,-1)) < 2*Leap.PI/3:
@@ -264,12 +263,12 @@ def mom_grandma_dad_grandpa(frame):
                                     if circle.progress >= 1.25:
                                         if lastWord != "grandpa":
                                             print "grandpa"
-                                            play('grandpa')
+                                            player('grandpa')
                                             lastWord = "grandpa"
                                             return True
                     if lastWord != "dad":
                         print "dad"
-                        play('dad')
+                        player('dad')
                         lastWord = "dad"
                         return True
         return False
@@ -547,7 +546,7 @@ def yes(frame):
                 if hand.palm_velocity.magnitude > 700:
                     time.sleep(0.5)
                     print "yes"
-                    play('yes')
+                    player('yes')
                     lastWord = "yes"
                     time.sleep(0.5)
                     return True
