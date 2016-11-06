@@ -1,7 +1,7 @@
 import Leap, sys, thread, time
 from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
 lastWord = ""
-TYPE_THUMB=TYPE_METACARPAL=0;
+TYPE_THUMB=TYPE_METACARPAL=0
 TYPE_INDEX=TYPE_PROXIMAL=1
 TYPE_MIDDLE=TYPE_INTERMEDIATE=2
 TYPE_RING=TYPE_DISTAL=3

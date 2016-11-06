@@ -490,6 +490,23 @@ def what(frame):
     return False
 
 
+def yes(frame):
+    global lastWord
+    if lastWord == 'yes':
+        return False
+    if len(frame.hands) != 1:
+        return False
+    for hand in frame.hands:
+        if hand.grab_strength > 0.7:
+            if hand.sphere_radius < 40:
+                if hand.palm_velocity.magnitude > 700:
+                    print 'yes'
+                    lastWord = 'yes'
+                    player('yes')
+                    return True
+    return False
+
+
 def you(frame):
     global lastWord
     f = [False, False, False, False, False]
