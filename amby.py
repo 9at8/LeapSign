@@ -22,13 +22,8 @@ def mom_grandma_dad_grandpa(frame):
     for hand in frame.hands:
         if hand.sphere_radius > 80:
             handChirality = 1 if hand.is_right else -1
-<<<<<<< HEAD
             if (handChirality*hand.palm_normal).angle_to(Leap.Vector(1,0,0)) > 2*Leap.PI/3:
                 if Leap.PI/6 < hand.direction.angle_to(Leap.Vector(0,0,-1)) < 3*Leap.PI/8:
-=======
-            if Leap.PI / 6 < hand.direction.pitch < Leap.PI / 3:
-                if -2 * Leap.PI / 3 < handChirality * hand.palm_normal.roll < -Leap.PI / 3:
->>>>>>> 0e7a0193c6ce9252cd10f7cb68b9b6b570b6608c
                     for gesture in frame.gestures():
                         if gesture.type == Leap.Gesture.TYPE_CIRCLE:
                             circle = CircleGesture(gesture)
@@ -47,12 +42,7 @@ def mom_grandma_dad_grandpa(frame):
                         print "mom"
                         lastWord = "mom"
                         return True
-<<<<<<< HEAD
-                if 5*Leap.PI/12 < hand.direction.pitch < 2*Leap.PI/3:
-=======
-            if Leap.PI / 3 < hand.direction.pitch < 2 * Leap.PI / 3:
-                if -2 * Leap.PI / 3 < handChirality * hand.palm_normal.roll < -Leap.PI / 3:
->>>>>>> 0e7a0193c6ce9252cd10f7cb68b9b6b570b6608c
+                if 5*Leap.PI/12 < hand.direction.angle_to(Leap.Vector(0,0,-1)) < 2*Leap.PI/3:
                     for gesture in frame.gestures():
                         if gesture.type == Leap.Gesture.TYPE_CIRCLE:
                             circle = CircleGesture(gesture)
@@ -127,11 +117,7 @@ def yes(frame):
                     time.sleep(0.5)
                     return True
     return False
-<<<<<<< HEAD
-    print "grab strength: " + str(hand.grab_strength) + " sphere_radius: " + str(hand.sphere_radius) + "palm_velocity: " + str(hand.palm_velocity.magnitude)
-=======
-
->>>>>>> 0e7a0193c6ce9252cd10f7cb68b9b6b570b6608c
+    #print "grab strength: " + str(hand.grab_strength) + " sphere_radius: " + str(hand.sphere_radius) + "palm_velocity: " + str(hand.palm_velocity.magnitude)
 
 def can(frame):
     global lastWord
@@ -366,7 +352,7 @@ def no(controller):
 '''
 
 
-def no(controller):
+'''def no(controller):
 <<<<<<< HEAD
 
     frame = controller.frame()
@@ -405,8 +391,7 @@ def no(controller):
                     lastWord = "no"
                     return True
 >>>>>>> 0e7a0193c6ce9252cd10f7cb68b9b6b570b6608c
-    return False
-
+    return False'''
 
 class LeapMotionListener(Leap.Listener):
     finger_names = ['Thumb', 'Index', 'Middle', 'Ring', 'pinky']
@@ -434,22 +419,13 @@ class LeapMotionListener(Leap.Listener):
         frame = controller.frame()
         # if not mom_grandma_dad_grandpa(frame):
         #    mom_grandma_dad_grandpa(frame)
-        if not yes(frame):
-            can(frame)
-<<<<<<< HEAD
+        #if not yes(frame):
+        #    can(frame)
         #number(frame)
         #no(controller)
         #cross_fingers(frame)
         #number(frame)
-        if ()
-=======
-            # number(frame)
-            # no(controller)
-            # cross_fingers(frame)
-            # number(frame)
 
-
->>>>>>> 0e7a0193c6ce9252cd10f7cb68b9b6b570b6608c
 def main():
     listener = LeapMotionListener()
     controller = Leap.Controller()
