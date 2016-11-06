@@ -58,17 +58,14 @@ def love(frame):
 			pinky_up = False if angle_to_pinky < 1 else True
 			thumb_up = False if projection_on_direction_thumb < -.75 else True
 
-			print "Pitch: " + str(hand.palm_normal.pitch * Leap.RAD_TO_DEG)
-			print "Yaw: " + str(hand.palm_normal.yaw * Leap.RAD_TO_DEG)
-
 			if index_up and not middle_up and not ring_up and pinky_up and thumb_up:
 				if hand.is_right: 
-					if abs(hand.palm_normal.pitch * Leap.RAD_TO_DEG) < 90 and abs(hand.palm_normal.yaw * Leap.RAD_TO_DEG) < 20:
+					if abs(hand.palm_normal.pitch * Leap.RAD_TO_DEG) < 1:
 						print "I love you"
 						lastWord = "love"
 			if index_up and middle_up and ring_up and pinky_up and thumb_up:
 				if hand.is_right: 
-					if hand.palm_normal.pitch * Leap.RAD_TO_DEG <= 90 and hand.palm_normal.pitch * Leap.RAD_TO_DEG > 20 and abs(hand.palm_normal.yaw * Leap.RAD_TO_DEG) < 40:
+					if abs(hand.palm_normal.pitch * Leap.RAD_TO_DEG) < 1:
 						print "five" 
 
 ''' def very(frame):
@@ -143,8 +140,8 @@ def but(frame):
 		if (rightworks and leftworks) == True: 
 			print "but" 
 			lastWord = 'but'						
-'''
-'''
+''' 
+
 def hello (frame):
 	global lastWord 
 	for hand in frame.hands: 
@@ -188,7 +185,7 @@ def body (frame):
 		if (wordright and wordleft) == True:
 			print "body"
 			lastWord = "body"
-'''
+
 def bye (frame):
     global lastWord
     strong = [False, False]
@@ -218,7 +215,7 @@ def bye (frame):
                 player('strong')
                 return True
     return False
-'''
+
 '''
  if gesture.type == Leap.Gesture.TYPE_SWIPE:
                     swipe = SwipeGesture(gesture)
@@ -296,6 +293,11 @@ class LeapMotionListener(Leap.Listener):
 
 		if lastWord != "love":
 			love(frame)
+
+		if lastWord != "hello":
+			hello(frame)
+
+		body(frame)
 
 def main():
 	listener = LeapMotionListener()
