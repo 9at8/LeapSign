@@ -141,7 +141,7 @@ def but(frame):
 			print "but" 
 			lastWord = 'but'						
 ''' 
-
+'''
 def hello (frame):
 	global lastWord 
 	for hand in frame.hands: 
@@ -185,36 +185,19 @@ def body (frame):
 		if (wordright and wordleft) == True:
 			print "body"
 			lastWord = "body"
+'''
 
-def bye (frame):
-    global lastWord
-    strong = [False, False]
-
-    for hand in frame.hands:
-
-        normal = hand.palm_normal
-        direction = hand.direction
-        strength = hand.grab_strength
-
-
-        if hand.is_left and strength >= 0.9:
-            if 100 >= (direction.yaw * Leap.RAD_TO_DEG) >= 60:
-                strong[0] = True
-            else:
-                strong[0] = False
-        elif hand.is_right and strength >= 0.9:
-            if -100 <= direction.yaw * Leap.RAD_TO_DEG <= -60:
-                strong[1] = True
-            else:
-                strong[1] = False
-
-        if strong[0] and strong[1]:
-            if lastWord != 'strong':
-                lastWord = 'strong'
-                print 'strong'
-                player('strong')
-                return True
-    return False
+def thankyou(frame):
+	global lastWord
+	for hand in frame.hands:
+		if hand.is_right:
+			for gesture in frame.gestures():
+				if gesture.type == Leap.Gesture.TYPE_SWIPE:
+					swipe = SwipeGesture(gesture)
+					if swipe.state != Leap.Gesture.STATE_START:
+						if swipe.direction.pitch * Leap.RAD_TO_DEG <= 0 and swipe.direction.pitch * Leap.RAD_TO_DEG >= -120 and abs(swipe.direction.yaw * Leap.RAD_TO_DEG) <= 20:
+							if abs(hand.palm_normal.roll * Leap.RAD_TO_DEG) <= 180 and abs(hand.palm_normal.roll * Leap.RAD_TO_DEG) >= 130:
+								print "Thank You"
 
 '''
  if gesture.type == Leap.Gesture.TYPE_SWIPE:
@@ -294,10 +277,7 @@ class LeapMotionListener(Leap.Listener):
 		if lastWord != "love":
 			love(frame)
 
-		if lastWord != "hello":
-			hello(frame)
-
-		body(frame)
+		thankyou(frame)
 
 def main():
 	listener = LeapMotionListener()
