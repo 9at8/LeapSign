@@ -231,7 +231,7 @@ def mom_grandma_dad_grandpa(frame):
     for hand in frame.hands:
         if hand.sphere_radius > 80:
             handChirality = 1 if hand.is_right else -1
-            if hand.palm_normal.angle_to(Leap.Vector(-1,0,0)) < Leap.PI/6 if handChirality=1 else hand.palm_normal.angle_to(Leap.Vector(1,0,0)) < Leap.PI/6:
+            if hand.palm_normal.angle_to(Leap.Vector(-1,0,0)) < Leap.PI/6 if handChirality==1 else hand.palm_normal.angle_to(Leap.Vector(1,0,0)) < Leap.PI/6:
                 if Leap.PI/6 < hand.direction.angle_to(Leap.Vector(0,0,-1)) < 3*Leap.PI/8:
                     for gesture in frame.gestures():
                         if gesture.type == Leap.Gesture.TYPE_CIRCLE:
