@@ -42,7 +42,7 @@ def area(frame):
 
 def can(frame):
     global lastWord
-    if lastWord == 'can':
+    if lastWord == "can":
         return False
     if len(frame.hands) != 2:
         return False
@@ -51,9 +51,10 @@ def can(frame):
     if hand0.grab_strength > 0.7 and hand1.grab_strength > 0.7:
         if hand0.sphere_radius < 40 and hand1.sphere_radius < 40:
             if hand0.palm_velocity.magnitude > 700 and hand1.palm_velocity.magnitude > 700:
-                print 'can'
-                player('can')
-                lastWord = 'can'
+                time.sleep(0.5)
+                print "can"
+                play('can')
+                lastWord = "can"
                 return True
     return False
 
@@ -226,50 +227,49 @@ def love(frame):
 
 def mom_grandma_dad_grandpa(frame):
     global lastWord
-    if len(frame.hands) != 1:
-        return False
     for hand in frame.hands:
         if hand.sphere_radius > 80:
-            hand_chirality = 1 if hand.is_right else -1
-            if Leap.PI / 6 < hand.direction.pitch < Leap.PI / 3:
-                if -2 * Leap.PI / 3 < hand_chirality * hand.palm_normal.roll < -Leap.PI / 3:
+            handChirality = 1 if hand.is_right else -1
+            if hand.palm_normal.angle_to(Leap.Vector(-1,0,0)) < Leap.PI/6 if handChirality=1 else hand.palm_normal.angle_to(Leap.Vector(1,0,0)) < Leap.PI/6:
+                if Leap.PI/6 < hand.direction.angle_to(Leap.Vector(0,0,-1)) < 3*Leap.PI/8:
                     for gesture in frame.gestures():
                         if gesture.type == Leap.Gesture.TYPE_CIRCLE:
                             circle = CircleGesture(gesture)
                             if (circle.pointable.direction.angle_to(
-                                    circle.normal) <= Leap.PI / 2) if hand_chirality == -1 else not (
-                                        circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2):  # clockwise
+                                    circle.normal) <= Leap.PI / 2) if handChirality == -1 else not (
+                                circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2):  # clockwise
                                 if circle.state != Leap.Gesture.STATE_START:
-                                    if circle.progress >= .75:
-                                        if lastWord != 'grandma':
-                                            print 'grandma'
-                                            player('grandma')
-                                            lastWord = 'grandma'
+                                    if circle.progress >= 1.25:
+                                        if lastWord != "grandma":
+                                            time.sleep(0.5)
+                                            print "grandma"
+                                            play('grandma')
+                                            lastWord = "grandma"
                                             return True
-                    if lastWord != 'mom':
-                        print 'mom'
-                        player('mom')
-                        lastWord = 'mom'
+                    if lastWord != "mom":
+                        time.sleep(0.5)
+                        print "mom"
+                        play('mom')
+                        lastWord = "mom"
                         return True
-            if Leap.PI / 3 < hand.direction.pitch < 2 * Leap.PI / 3:
-                if -2 * Leap.PI / 3 < hand_chirality * hand.palm_normal.roll < -Leap.PI / 3:
+                if 5*Leap.PI/12 < hand.direction.angle_to(Leap.Vector(0,0,-1)) < 2*Leap.PI/3:
                     for gesture in frame.gestures():
                         if gesture.type == Leap.Gesture.TYPE_CIRCLE:
                             circle = CircleGesture(gesture)
                             if (circle.pointable.direction.angle_to(
-                                    circle.normal) <= Leap.PI / 2) if hand_chirality == -1 else not (
-                                        circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2):  # clockwise
+                                    circle.normal) <= Leap.PI / 2) if handChirality == -1 else not (
+                                circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2):  # clockwise
                                 if circle.state != Leap.Gesture.STATE_START:
-                                    if circle.progress >= .75:
-                                        if lastWord != 'grandpa':
-                                            print 'grandpa'
-                                            player('grandpa')
-                                            lastWord = 'grandpa'
+                                    if circle.progress >= 1.25:
+                                        if lastWord != "grandpa":
+                                            print "grandpa"
+                                            play('grandpa')
+                                            lastWord = "grandpa"
                                             return True
-                    if lastWord != 'dad':
-                        print 'dad'
-                        player('dad')
-                        lastWord = 'dad'
+                    if lastWord != "dad":
+                        print "dad"
+                        play('dad')
+                        lastWord = "dad"
                         return True
         return False
 
@@ -534,17 +534,21 @@ def what(frame):
 
 def yes(frame):
     global lastWord
-    if lastWord == 'yes':
+    if lastWord == "yes":
         return False
     if len(frame.hands) != 1:
         return False
     for hand in frame.hands:
+        if hand.palm_normal.angle_to(Leap.Vector(0,-1,0)) > 1.0:
+            return False
         if hand.grab_strength > 0.7:
             if hand.sphere_radius < 40:
                 if hand.palm_velocity.magnitude > 700:
-                    print 'yes'
-                    lastWord = 'yes'
-                    player('yes')
+                    time.sleep(0.5)
+                    print "yes"
+                    play('yes')
+                    lastWord = "yes"
+                    time.sleep(0.5)
                     return True
     return False
 
