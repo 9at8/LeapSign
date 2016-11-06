@@ -25,12 +25,12 @@ def mom_grandma_dad_grandpa(frame):
                             circle = CircleGesture(gesture)
                             if (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2) if handChirality == -1 else not (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2): #clockwise
                                 if circle.state != Leap.Gesture.STATE_START:
-                                    if circle.progress >= 1.75:
+                                    if circle.progress >= 1.25:
                                         if lastWord != "grandma":
                                             print "grandma"
                                             lastWord = "grandma"
                                             return True
-                    if lastWord != "mom":
+                    if lastWord != "mom" and lastWord != "grandma":
                         print "mom"
                         lastWord = "mom"
                         return True
@@ -41,12 +41,12 @@ def mom_grandma_dad_grandpa(frame):
                             circle = CircleGesture(gesture)
                             if (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2) if handChirality == -1 else not (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2): #clockwise
                                 if circle.state != Leap.Gesture.STATE_START:
-                                    if circle.progress >= 1.75:
+                                    if circle.progress >= 1.25:
                                         if lastWord != "grandpa":
                                             print "grandpa"
                                             lastWord = "grandpa"
                                             return True
-                    if lastWord != "dad":
+                    if lastWord != "dad" and lastWord != "grandpa":
                         print "dad"
                         lastWord = "dad"
                         return True
@@ -87,8 +87,40 @@ def cross_fingers(frame):
         #print str((index_finger_distal.center-middle_finger_distal.center).angle_to(index_finger_metacarpal.center-middle_finger_metacarpal.center))
 
 
+def yes(frame):
+    global lastWord
+    if lastWord == "yes":
+        return False
+    if len(frame.hands) != 1:
+        return False
+    for hand in frame.hands:
+        if hand.grab_strength > 0.7:
+            if hand.sphere_radius < 40:
+                if hand.palm_velocity.magnitude > 700:
+                    print "yes"
+                    lastWord = "yes"
+                    return True
+    return False
+    #print "grab strength: " + str(hand.grab_strength) + " sphere_radius: " + str(hand.sphere_radius) + "palm_velocity: " + str(hand.palm_velocity.magnitude)
 
+def can(frame):
+    global lastWord
+    if lastWord == "can":
+        return False
+    if len(frame.hands) != 2:
+        return False
+    hand0=frame.hands[0]
+    hand1=frame.hands[1]
+    if hand0.grab_strength > 0.7 and hand1.grab_strength > 0.7:
+        if hand0.sphere_radius < 40 and hand1.sphere_radius < 40:
+            if hand0.palm_velocity.magnitude > 700 and hand1.palm_velocity.magnitude > 700:
+                print "can"
+                lastWord = "can"
+                return True
+    return False
 def number(frame):
+    if len(frame.hands) != 1:
+        return False
     global lastWord
     for hand in frame.hands:
         handChirality = 1 if hand.is_right else -1
@@ -267,7 +299,7 @@ def number(frame):
                     return True
     return False
 
-#def yes
+'''
 def no(controller):
     global lastWord
     frame = controller.frame()
@@ -275,7 +307,7 @@ def no(controller):
     last_frame = controller.frame(past)
     if not last_frame.is_valid:
         return False
-    while last_frame.is_valid:
+    while last_frame.is_valid && past:
         pinch = None
         last_pinch = None
         for hand in frame.hands:
@@ -286,13 +318,43 @@ def no(controller):
             break
         past +=1
         last_frame = controller.frame(past)
-    if past < frame.current_frames_per_second:
+    if past ==1:
         if lastWord != "no":
             print "no"
             lastWord = "no"
             return True
         else:
             return False
+'''
+def no(controller):
+    global lastWord
+    if lastWord  == "no":
+        return False
+    frame = controller.frame()
+    if len(frame.hands) != 1:
+        return False
+    for hand in frame.hands:
+        if hand.pinch_strength > 0.2:
+            return False
+    frame_buffer=[]
+    frame_buffer.append(frame)
+    frame_gap=int(frame.current_frames_per_second//5)
+    for i in xrange(4):
+        frame = controller.frame(frame_gap)
+        if not frame.is_valid:
+            return False
+        if len(frame.hands) != 1:
+            return False
+        frame_buffer.append(frame)
+    for hand in frame_buffer[4].hands:
+        if hand.pinch_strength < 0.3:
+            for hand in frame_buffer[2].hands:
+                if hand.pinch_strength>0.7:
+                    print "no"
+                    lastWord = "no"
+                    return True
+    return False
+
 
 class LeapMotionListener(Leap.Listener):
     finger_names = ['Thumb', 'Index', 'Middle', 'Ring', 'pinky']
@@ -318,9 +380,12 @@ class LeapMotionListener(Leap.Listener):
 
     def on_frame(self, controller):
         frame = controller.frame()
-        if not mom_grandma_dad_grandpa(frame):
-            number(frame)
-                #no(controller)
+        #if not mom_grandma_dad_grandpa(frame):
+        #    mom_grandma_dad_grandpa(frame)
+        if not yes(frame):
+            can(frame)
+        #number(frame)
+        #no(controller)
         #cross_fingers(frame)
         #number(frame)
 def main():

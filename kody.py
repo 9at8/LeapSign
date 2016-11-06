@@ -10,6 +10,24 @@ Pitch: -Z on Y-Z plane
 finger_names = ['Thumb', 'Index', 'Middle', 'Ring', 'Pinky']
 bone_names = ['Metacarpal', 'Proximal', 'Intermediate', 'Distal']
 """
+def hi(frame):
+    global lastWord
+    righthand = False 
+
+    for hand in frame.hands:
+        if len(frame.hands)==1:
+            if hand.is_right:
+                for gesture in frame.gestures():
+                    if gesture.type == Leap.Gesture.TYPE_SWIPE:
+                        swipe = SwipeGesture(gesture)
+                        if (swipe.state != Leap.Gesture.STATE_START):
+    #                        print str(swipe.direction.yaw * Leap.RAD_TO_DEG) + " " + str(swipe.direction.roll * Leap.RAD_TO_DEG)
+                            righthand = (abs(swipe.direction.yaw * Leap.RAD_TO_DEG -90) <= 30 and abs(swipe.direction.roll * Leap.RAD_TO_DEG -90) <= 30)
+    if righthand:
+        print "hi "
+        lastWord = "hi"
+
+
 """
 def no(frame):
     global lastWord
@@ -102,7 +120,7 @@ def no(controller):
             return True
         else: return False
 """
-
+"""
 def please(frame):
     global lastWord
     op = False
@@ -130,6 +148,25 @@ def please(frame):
     if op:
         lastWord = "please"
         print 'please'
+"""
+
+def please(frame):
+    global lastWord
+    for hand in frame.hands:
+        for gesture in frame.gestures():
+            if gesture.type == Leap.Gesture.TYPE_CIRCLE:
+                circle = CircleGesture(gesture)
+                if (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2) == False:
+                    if hand.is_right:
+                        if circle.state != Leap.Gesture.STATE_START:
+                            if hand.palm_normal.roll * Leap.RAD_TO_DEG <= -65 and hand.palm_normal.roll * Leap.RAD_TO_DEG >= -115:
+                                if hand.direction.yaw * Leap.RAD_TO_DEG >= -115 and hand.direction.yaw * Leap.RAD_TO_DEG <= -65:
+                                    if circle.progress >= 1.75:
+                                        if lastWord != 'please':
+                                            lastWord = 'please'
+                                            print 'please'
+                                            return True
+    return False
 
 def area(frame):
     global lastWord
@@ -324,6 +361,10 @@ class LeapMotionListener(Leap.Listener):
 
         if lastWord != "you":
             you(frame)
+
+        if lastWord != "hi":
+            hi(frame)
+
         """
         for gesture in frame.gestures():
 
