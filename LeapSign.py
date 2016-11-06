@@ -216,11 +216,12 @@ def love(frame):
         thumb_up = False if projection_on_direction_thumb < -.75 else True
 
         if index_up and not middle_up and not ring_up and pinky_up and thumb_up:
-            if lastWord != 'love':
-                print 'I love you'
-                lastWord = 'love'
-                player('ily')
-                return True
+            if abs(hand.palm_normal.angle_to(Leap.Vector(0,-1,0))) * Leap.RAD_TO_DEG <= 30:
+                if lastWord != 'love':
+                    print 'I love you'
+                    lastWord = 'love'
+                    player('ily')
+                    return True
     return False
 
 
