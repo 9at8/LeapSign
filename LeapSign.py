@@ -468,13 +468,13 @@ def you(frame):
                     for b in range(0, 4):
                         bone = finger.bone(b)
                         if bone.type == 3:
-                            f[1] = (abs(bone.direction.yaw * Leap.RAD_TO_DEG - 135) < 30)\
+                            f[1] = (abs(bone.direction.yaw * Leap.RAD_TO_DEG - 135) < 30) \
                                    and (abs(bone.direction.pitch * Leap.RAD_TO_DEG + 165) < 30)
                 elif finger.type != 0:
                     for b in range(0, 4):
                         bone = finger.bone(b)
                         if bone.type == 1:
-                            f[finger.type] = (abs(bone.direction.yaw * Leap.RAD_TO_DEG - 90) < 30)\
+                            f[finger.type] = (abs(bone.direction.yaw * Leap.RAD_TO_DEG - 90) < 30) \
                                              and (abs(bone.direction.pitch * Leap.RAD_TO_DEG + 90) < 30)
     if f[1] and f[2] and f[3] and f[4] and lastWord != 'you':
         print 'you'
@@ -523,8 +523,8 @@ class LeapMotionListener(Leap.Listener):
         #     if lastWord != 'love':
         #         love(frame)
 
-        area(frame) or cold(frame) or day(frame) or house(frame) or love(frame) or mom_grandma_dad_grandpa(
-            frame) or please(frame) or what(frame)
+        area(frame) or cold(frame) or day(frame) or house(frame) or love(frame) or mom_grandma_dad_grandpa(frame) \
+        or please(frame) or what(frame) or you(frame)
 
 
 def main():
