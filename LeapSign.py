@@ -590,8 +590,8 @@ class LeapMotionListener(Leap.Listener):
         #     if lastWord != 'love':
         #         love(frame)
 
-        area(frame) or cold(frame) or day(frame) or house(frame) or love(frame) or mom_grandma_dad_grandpa(frame) \
-        or please(frame) or strong(frame) or what(frame) or you(frame)
+        area(frame) or can(frame) or cold(frame) or day(frame) or house(frame) or love(frame) \
+        or mom_grandma_dad_grandpa(frame) or please(frame) or strong(frame) or what(frame) or yes(frame) or you(frame)
 
 
 def main():
