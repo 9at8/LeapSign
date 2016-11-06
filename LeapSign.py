@@ -91,7 +91,7 @@ def day(frame):
                                     (swipe.direction.roll * Leap.RAD_TO_DEG <= 180)
     if lefthand and righthand and lastWord != 'day':
         print 'day'
-        # player('day')
+        player('day')
         lastWord = 'day'
         return True
     return False
@@ -438,6 +438,36 @@ def please(frame):
     return False
 
 
+def strong(frame):
+    global lastWord
+    strong = [False, False]
+
+    for hand in frame.hands:
+
+        normal = hand.palm_normal
+        direction = hand.direction
+        strength = hand.grab_strength
+
+        if hand.is_left and strength >= 0.9:
+            if 100 >= (direction.yaw * Leap.RAD_TO_DEG) >= 60:
+                strong[0] = True
+            else:
+                strong[0] = False
+        elif hand.is_right and strength >= 0.9:
+            if -100 <= direction.yaw * Leap.RAD_TO_DEG <= -60:
+                strong[1] = True
+            else:
+                strong[1] = False
+
+        if strong[0] and strong[1]:
+            if lastWord != 'strong':
+                lastWord = 'strong'
+                print 'strong'
+                player('strong')
+                return True
+    return False
+
+
 def what(frame):
     global lastWord
     lhand = False
@@ -454,6 +484,32 @@ def what(frame):
         print 'what'
         player('what')
         lastWord = 'what'
+        return True
+    return False
+
+
+def you(frame):
+    global lastWord
+    f = [False, False, False, False, False]
+    for hand in frame.hands:
+        if hand.is_right and len(frame.hands) == 1:
+            for finger in hand.fingers:
+                if finger.type == 1:
+                    for b in range(0, 4):
+                        bone = finger.bone(b)
+                        if bone.type == 3:
+                            f[1] = (abs(bone.direction.yaw * Leap.RAD_TO_DEG - 135) < 30) \
+                                   and (abs(bone.direction.pitch * Leap.RAD_TO_DEG + 165) < 30)
+                elif finger.type != 0:
+                    for b in range(0, 4):
+                        bone = finger.bone(b)
+                        if bone.type == 1:
+                            f[finger.type] = (abs(bone.direction.yaw * Leap.RAD_TO_DEG - 90) < 30) \
+                                             and (abs(bone.direction.pitch * Leap.RAD_TO_DEG + 90) < 30)
+    if f[1] and f[2] and f[3] and f[4] and lastWord != 'you':
+        print 'you'
+        player('you')
+        lastWord = 'you'
         return True
     return False
 
@@ -480,7 +536,7 @@ class LeapMotionListener(Leap.Listener):
         global lastWord
         frame = controller.frame()
 
-        time.sleep(0.5)
+        time.sleep(0.3)
 
         # if not (cold(frame) or house(frame) or love(frame) or please(frame) or mom_grandma_dad_grandpa(frame)):
         #     number(frame)
@@ -497,7 +553,8 @@ class LeapMotionListener(Leap.Listener):
         #     if lastWord != 'love':
         #         love(frame)
 
-        area(frame) or cold(frame) or day(frame) or house(frame) or love(frame) or mom_grandma_dad_grandpa(frame) or please(frame) or what(frame)
+        area(frame) or cold(frame) or day(frame) or house(frame) or love(frame) or mom_grandma_dad_grandpa(frame) \
+        or please(frame) or strong(frame) or what(frame) or you(frame)
 
 
 def main():
