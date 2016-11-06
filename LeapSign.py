@@ -438,6 +438,36 @@ def please(frame):
     return False
 
 
+def strong(frame):
+    global lastWord
+    strong = [False, False]
+
+    for hand in frame.hands:
+
+        normal = hand.palm_normal
+        direction = hand.direction
+        strength = hand.grab_strength
+
+        if hand.is_left and strength >= 0.9:
+            if 100 >= (direction.yaw * Leap.RAD_TO_DEG) >= 60:
+                strong[0] = True
+            else:
+                strong[0] = False
+        elif hand.is_right and strength >= 0.9:
+            if -100 <= direction.yaw * Leap.RAD_TO_DEG <= -60:
+                strong[1] = True
+            else:
+                strong[1] = False
+
+        if strong[0] and strong[1]:
+            if lastWord != 'strong':
+                lastWord = 'strong'
+                print 'strong'
+                player('strong')
+                return True
+    return False
+
+
 def what(frame):
     global lastWord
     lhand = False
@@ -506,7 +536,7 @@ class LeapMotionListener(Leap.Listener):
         global lastWord
         frame = controller.frame()
 
-        time.sleep(0.5)
+        time.sleep(0.3)
 
         # if not (cold(frame) or house(frame) or love(frame) or please(frame) or mom_grandma_dad_grandpa(frame)):
         #     number(frame)
@@ -524,7 +554,7 @@ class LeapMotionListener(Leap.Listener):
         #         love(frame)
 
         area(frame) or cold(frame) or day(frame) or house(frame) or love(frame) or mom_grandma_dad_grandpa(frame) \
-        or please(frame) or what(frame) or you(frame)
+        or please(frame) or strong(frame) or what(frame) or you(frame)
 
 
 def main():
