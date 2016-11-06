@@ -120,7 +120,7 @@ def no(controller):
             return True
         else: return False
 """
-
+"""
 def please(frame):
     global lastWord
     op = False
@@ -148,6 +148,25 @@ def please(frame):
     if op:
         lastWord = "please"
         print 'please'
+"""
+
+def please(frame):
+    global lastWord
+    for hand in frame.hands:
+        for gesture in frame.gestures():
+            if gesture.type == Leap.Gesture.TYPE_CIRCLE:
+                circle = CircleGesture(gesture)
+                if (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2) == False:
+                    if hand.is_right:
+                        if circle.state != Leap.Gesture.STATE_START:
+                            if hand.palm_normal.roll * Leap.RAD_TO_DEG <= -65 and hand.palm_normal.roll * Leap.RAD_TO_DEG >= -115:
+                                if hand.direction.yaw * Leap.RAD_TO_DEG >= -115 and hand.direction.yaw * Leap.RAD_TO_DEG <= -65:
+                                    if circle.progress >= 1.75:
+                                        if lastWord != 'please':
+                                            lastWord = 'please'
+                                            print 'please'
+                                            return True
+    return False
 
 def area(frame):
     global lastWord
