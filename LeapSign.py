@@ -251,20 +251,6 @@ def mom_grandma_dad_grandpa(frame):
                 handChirality = 1 if hand.is_right else -1
                 if hand.palm_normal.angle_to(Leap.Vector(-1,0,0)) < Leap.PI/6 if handChirality==1 else hand.palm_normal.angle_to(Leap.Vector(1,0,0)) < Leap.PI/6:
                     if Leap.PI/6 < hand.direction.angle_to(Leap.Vector(0,0,-1)) < 3*Leap.PI/8:
-                        for gesture in frame.gestures():
-                            if gesture.type == Leap.Gesture.TYPE_CIRCLE:
-                                circle = CircleGesture(gesture)
-                                if (circle.pointable.direction.angle_to(
-                                        circle.normal) <= Leap.PI / 2) if handChirality == -1 else not (
-                                    circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2):  # clockwise
-                                    if circle.state != Leap.Gesture.STATE_START:
-                                        if circle.progress >= 1.25:
-                                            if lastWord != "grandma":
-                                                time.sleep(0.5)
-                                                print "grandma"
-                                                player('grandma')
-                                                lastWord = "grandma"
-                                                return True
                         if lastWord != "mom":
                             time.sleep(0.5)
                             print "mom"
@@ -272,19 +258,6 @@ def mom_grandma_dad_grandpa(frame):
                             lastWord = "mom"
                             return True
                     if 5*Leap.PI/12 < hand.direction.angle_to(Leap.Vector(0,0,-1)) < 2*Leap.PI/3:
-                        for gesture in frame.gestures():
-                            if gesture.type == Leap.Gesture.TYPE_CIRCLE:
-                                circle = CircleGesture(gesture)
-                                if (circle.pointable.direction.angle_to(
-                                        circle.normal) <= Leap.PI / 2) if handChirality == -1 else not (
-                                    circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2):  # clockwise
-                                    if circle.state != Leap.Gesture.STATE_START:
-                                        if circle.progress >= 1.25:
-                                            if lastWord != "grandpa":
-                                                print "grandpa"
-                                                player('grandpa')
-                                                lastWord = "grandpa"
-                                                return True
                         if lastWord != "dad":
                             print "dad"
                             player('dad')
