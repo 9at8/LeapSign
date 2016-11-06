@@ -48,10 +48,11 @@ def but(frame):
         for gesture in frame.gestures():
             if gesture.type == Leap.Gesture.TYPE_SWIPE:
                 swipe = SwipeGesture(gesture)
-                if abs(swipe.direction.yaw * Leap.RAD_TO_DEG - 90) <= 30 and abs(swipe.direction.roll * Leap.RAD_TO_DEG - 90) <= 30:
+#                print str(swipe.direction.yaw * Leap.RAD_TO_DEG) + " " + str(swipe.direction.roll * Leap.RAD_TO_DEG)
+                if abs(swipe.direction.yaw * Leap.RAD_TO_DEG - 90) <= 35 and abs(swipe.direction.roll * Leap.RAD_TO_DEG - 90) <= 35:
                     lhand = True
 #                    print "Left ok !"
-                if abs(swipe.direction.yaw * Leap.RAD_TO_DEG + 90) <= 30 and abs(swipe.direction.roll * Leap.RAD_TO_DEG + 90) <= 30:
+                if abs(swipe.direction.yaw * Leap.RAD_TO_DEG + 90) <= 35 and abs(swipe.direction.roll * Leap.RAD_TO_DEG + 90) <= 35:
                     rhand = True
 #                    print "Right ok !"
     if lhand and rhand:
@@ -186,6 +187,28 @@ def house(frame):
                 return True
     return False
 
+def judges(frame):
+    global lastWord
+    if lastWord == "judges":
+        return False;
+    lhand = rhand = False
+    if len(frame.hands) == 2:
+        for hand in frame.hands:
+            for gesture in frame.gestures():
+                if gesture.type == Leap.Gesture.TYPE_SWIPE:
+                    swipe = SwipeGesture(gesture)
+    #                print str(swipe.direction.pitch * Leap.RAD_TO_DEG) + " " + str(swipe.direction.roll * Leap.RAD_TO_DEG)
+                    if abs(abs(swipe.direction.pitch * Leap.RAD_TO_DEG)-90) <= 20 and abs(abs(swipe.direction.roll * Leap.RAD_TO_DEG)-180) <= 20 and hand.pinch_strength == 1 and hand.is_right == True:
+                        lhand = True
+    #                    print "Left ok !"
+                    if abs(swipe.direction.pitch * Leap.RAD_TO_DEG + 90) <= 20 and abs(swipe.direction.roll * Leap.RAD_TO_DEG) <= 20 and hand.pinch_strength ==1 and hand.is_left == True:
+                        rhand = True
+    #                    print "Right ok !"
+    if lhand and rhand:
+        lastWord = "judges"
+        print "judges"
+        return True
+    return False
 
 def love(frame):
     global lastWord
@@ -652,7 +675,7 @@ class LeapMotionListener(Leap.Listener):
         global lastWord
         frame = controller.frame()
 
-        time.sleep(0.3)
+        time.sleep(0.2)
 
         # if not (cold(frame) or house(frame) or love(frame) or please(frame) or mom_grandma_dad_grandpa(frame)):
         #     number(frame)
@@ -669,7 +692,7 @@ class LeapMotionListener(Leap.Listener):
         #     if lastWord != 'love':
         #         love(frame)
 
-        area(frame) or but(frame) or can(frame) or cold(frame) or day(frame) or hi(frame) or house(frame) or love(frame) \
+        area(frame) or but(frame) or can(frame) or cold(frame) or day(frame) or hi(frame) or house(frame) or judges(frame) or love(frame) \
         or mom_grandma_dad_grandpa(frame) or please(frame) or strong(frame) or what(frame) or yes(frame) or you(frame)
 
 
