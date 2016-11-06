@@ -553,6 +553,20 @@ def strong(frame):
                 return True
     return False
 
+def thankyou(frame):
+    global lastWord
+    if lastWord == "thank you":
+        return False
+    for hand in frame.hands:
+        if hand.is_right:
+            for gesture in frame.gestures():
+                if gesture.type == Leap.Gesture.TYPE_SWIPE:
+                    swipe = SwipeGesture(gesture)
+                    if swipe.state != Leap.Gesture.STATE_START:
+                        if swipe.direction.pitch * Leap.RAD_TO_DEG <= 0 and swipe.direction.pitch * Leap.RAD_TO_DEG >= -120 and abs(swipe.direction.yaw * Leap.RAD_TO_DEG) <= 20:
+                            if abs(hand.palm_normal.roll * Leap.RAD_TO_DEG) <= 180 and abs(hand.palm_normal.roll * Leap.RAD_TO_DEG) >= 130 and lastWord != "thank you":
+                                print "thank you"
+                                lastWord = "thank you"
 
 def what(frame):
     global lastWord
@@ -583,10 +597,9 @@ def yes(frame):
     for hand in frame.hands:
         if hand.palm_normal.angle_to(Leap.Vector(0,-1,0)) > 1.0:
             return False
-        if hand.grab_strength > 0.7:
-            if hand.sphere_radius < 40:
+        if hand.grab_strength == 1.0:
+            if hand.sphere_radius < 30:
                 if hand.palm_velocity.magnitude > 700:
-                    time.sleep(0.5)
                     print "yes"
                     player('yes')
                     lastWord = "yes"
@@ -693,7 +706,7 @@ class LeapMotionListener(Leap.Listener):
         #         love(frame)
 
         area(frame) or but(frame) or can(frame) or cold(frame) or day(frame) or hi(frame) or house(frame) or judges(frame) or love(frame) \
-        or mom_grandma_dad_grandpa(frame) or please(frame) or strong(frame) or what(frame) or yes(frame) or you(frame)
+        or mom_grandma_dad_grandpa(frame) or please(frame) or strong(frame) or thankyou(frame) or what(frame) or yes(frame) or you(frame)
 
 
 def main():
