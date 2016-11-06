@@ -58,6 +58,7 @@ def but(frame):
     if lhand and rhand:
         lastWord = "but"
         print "but"
+        player('but')
         return True
     return False
 
@@ -104,7 +105,7 @@ def cold(frame):
                 lastWord = 'cold'
                 print 'cold'
                 player('cold')
-                time.sleep(0.5)
+                time.sleep(1)
                 return True
     return False
 
@@ -208,6 +209,7 @@ def judges(frame):
     if lhand and rhand:
         lastWord = "judges"
         print "judges"
+        player ('judges')
         return True
     return False
 
@@ -318,7 +320,7 @@ def mom_grandma_dad_grandpa(frame):
                             print "dad"
                             player('dad')
                             lastWord = "dad"
-                            time.sleep(0.25)
+                            time.sleep(1)
                             return True
         return False
 
@@ -576,6 +578,7 @@ def thankyou(frame):
                                 if abs(hand.palm_normal.roll * Leap.RAD_TO_DEG) <= 180 and abs(hand.palm_normal.roll * Leap.RAD_TO_DEG) >= 130 and lastWord != "thank you":
                                     print "thank you"
                                     lastWord = "thank you"
+                                    player('thank_you')
 
 def what(frame):
     global lastWord
