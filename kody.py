@@ -11,7 +11,7 @@ finger_names = ['Thumb', 'Index', 'Middle', 'Ring', 'Pinky']
 bone_names = ['Metacarpal', 'Proximal', 'Intermediate', 'Distal']
 """
 
-"""
+
 def but(frame):
     global lastWord
     lhand = rhand = False
@@ -19,7 +19,19 @@ def but(frame):
         for gesture in frame.gestures():
             if gesture.type == Leap.Gesture.TYPE_SWIPE:
                 swipe = SwipeGesture(gesture)
-"""
+                if abs(swipe.direction.yaw * Leap.RAD_TO_DEG - 90) <= 30 and abs(swipe.direction.roll * Leap.RAD_TO_DEG - 90) <= 30:
+                    lhand = True
+#                    print "Left ok !"
+                if abs(swipe.direction.yaw * Leap.RAD_TO_DEG + 90) <= 30 and abs(swipe.direction.roll * Leap.RAD_TO_DEG + 90) <= 30:
+                    rhand = True
+#                    print "Right ok !"
+    if lhand and rhand:
+        lastWord = "but"
+        print "but"
+        return True
+    return False
+
+
 
 
 def hi(frame):
@@ -386,6 +398,9 @@ class LeapMotionListener(Leap.Listener):
 
         if lastWord != "hi":
             hi(frame)
+
+        if lastWord != "but":
+            but(frame)
 
         """
         for gesture in frame.gestures():
