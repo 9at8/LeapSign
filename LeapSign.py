@@ -67,12 +67,12 @@ def cold(frame):
         normal = hand.palm_normal
         strength = hand.grab_strength
 
-        if hand.is_left and strength > 0.9:
+        if hand.is_left and strength == 1:
             if 110 >= (normal.roll * Leap.RAD_TO_DEG) >= 70:
                 cold[0] = True
             else:
                 cold[0] = False
-        elif hand.is_right and strength > 0.9:
+        elif hand.is_right and strength == 1:
             if -110 <= (normal.roll * Leap.RAD_TO_DEG) <= -70:
                 cold[1] = True
             else:
