@@ -40,6 +40,24 @@ def area(frame):
     return False
 
 
+def can(frame):
+    global lastWord
+    if lastWord == 'can':
+        return False
+    if len(frame.hands) != 2:
+        return False
+    hand0 = frame.hands[0]
+    hand1 = frame.hands[1]
+    if hand0.grab_strength > 0.7 and hand1.grab_strength > 0.7:
+        if hand0.sphere_radius < 40 and hand1.sphere_radius < 40:
+            if hand0.palm_velocity.magnitude > 700 and hand1.palm_velocity.magnitude > 700:
+                print 'can'
+                player('can')
+                lastWord = 'can'
+                return True
+    return False
+
+
 def cold(frame):
     global lastWord
     cold = [False, False]
@@ -49,12 +67,12 @@ def cold(frame):
         normal = hand.palm_normal
         strength = hand.grab_strength
 
-        if hand.is_left and strength > 0.9:
+        if hand.is_left and strength == 1:
             if 110 >= (normal.roll * Leap.RAD_TO_DEG) >= 70:
                 cold[0] = True
             else:
                 cold[0] = False
-        elif hand.is_right and strength > 0.9:
+        elif hand.is_right and strength == 1:
             if -110 <= (normal.roll * Leap.RAD_TO_DEG) <= -70:
                 cold[1] = True
             else:
@@ -95,6 +113,30 @@ def day(frame):
         lastWord = 'day'
         return True
     return False
+
+
+def hi(frame):
+    global lastWord
+    righthand = False
+
+    for hand in frame.hands:
+        if len(frame.hands) == 1:
+            if hand.is_right:
+                for gesture in frame.gestures():
+                    if gesture.type == Leap.Gesture.TYPE_SWIPE:
+                        swipe = SwipeGesture(gesture)
+                        if (swipe.state != Leap.Gesture.STATE_START):
+                            #                            print str(swipe.direction.yaw * Leap.RAD_TO_DEG) + " " + str(swipe.direction.roll * Leap.RAD_TO_DEG)
+                            if (abs(swipe.direction.yaw * Leap.RAD_TO_DEG - 95) <= 30 and abs(
+                                            swipe.direction.roll * Leap.RAD_TO_DEG - 95) <= 30):
+                                #                                print str(hand.palm_normal.yaw * Leap.RAD_TO_DEG) + " " + str(hand.palm_normal.pitch * Leap.RAD_TO_DEG)
+                                if abs(hand.palm_normal.yaw * Leap.RAD_TO_DEG + 30) <= 30 and abs(
+                                                        hand.palm_normal.pitch * Leap.RAD_TO_DEG + 30) <= 30:
+                                    righthand = True
+    if righthand and lastWord != 'hi':
+        print "hi"
+        player('hi')
+        lastWord = "hi"
 
 
 def house(frame):
@@ -430,7 +472,7 @@ def please(frame):
                     if hand.is_right:
                         if circle.state != Leap.Gesture.STATE_START:
                             if hand.palm_normal.roll * Leap.RAD_TO_DEG <= -65 and hand.palm_normal.roll * Leap.RAD_TO_DEG >= -115:
-                                if hand.direction.yaw * Leap.RAD_TO_DEG >= -115 and hand.direction.yaw * Leap.RAD_TO_DEG <= -65:
+                                if abs(hand.direction.yaw * Leap.RAD_TO_DEG +65 ) <= 30:
                                     if circle.progress >= 1.75:
                                         if lastWord != 'please':
                                             lastWord = 'please'
@@ -478,9 +520,9 @@ def what(frame):
     for hand in frame.hands:
         if abs(hand.palm_normal.roll) * Leap.RAD_TO_DEG > 150:
             if abs(hand.palm_normal.pitch * Leap.RAD_TO_DEG - 90) < 30:
-                if hand.is_left:
+                if hand.is_left and hand.grab_strength == 0:
                     lhand = True
-                if hand.is_right:
+                if hand.is_right and hand.grab_strength == 0:
                     rhand = True
     if lhand and rhand and lastWord != 'what':
         print 'what'
@@ -488,6 +530,49 @@ def what(frame):
         lastWord = 'what'
         return True
     return False
+
+
+def yes(frame):
+    global lastWord
+    if lastWord == 'yes':
+        return False
+    if len(frame.hands) != 1:
+        return False
+    for hand in frame.hands:
+        if hand.grab_strength > 0.7:
+            if hand.sphere_radius < 40:
+                if hand.palm_velocity.magnitude > 700:
+                    print 'yes'
+                    lastWord = 'yes'
+                    player('yes')
+                    return True
+    return False
+
+
+# def you(frame):
+#     global lastWord
+#     f = [False, False, False, False, False]
+#     for hand in frame.hands:
+#         if hand.is_right and len(frame.hands) == 1:
+#             for finger in hand.fingers:
+#                 if finger.type == 1:
+#                     for b in range(0, 4):
+#                         bone = finger.bone(b)
+#                         if bone.type == 3:
+#                             f[1] = (abs(bone.direction.yaw * Leap.RAD_TO_DEG - 135) < 30) \
+#                                    and (abs(bone.direction.pitch * Leap.RAD_TO_DEG + 165) < 30)
+#                 elif finger.type != 0:
+#                     for b in range(0, 4):
+#                         bone = finger.bone(b)
+#                         if bone.type == 1:
+#                             f[finger.type] = (abs(bone.direction.yaw * Leap.RAD_TO_DEG - 90) < 30) \
+#                                              and (abs(bone.direction.pitch * Leap.RAD_TO_DEG + 90) < 30)
+#     if f[1] and f[2] and f[3] and f[4] and lastWord != 'you':
+#         print 'you'
+#         player('you')
+#         lastWord = 'you'
+#         return True
+#     return False
 
 
 def you(frame):
@@ -500,19 +585,25 @@ def you(frame):
                     for b in range(0, 4):
                         bone = finger.bone(b)
                         if bone.type == 3:
-                            f[1] = (abs(bone.direction.yaw * Leap.RAD_TO_DEG - 135) < 30) \
-                                   and (abs(bone.direction.pitch * Leap.RAD_TO_DEG + 165) < 30)
+                            #                            print "INDEX: " + str(bone.direction.yaw * Leap.RAD_TO_DEG) + " " + str(bone.direction.pitch * Leap.RAD_TO_DEG)
+                            if abs(bone.direction.yaw * Leap.RAD_TO_DEG - 135) < 30 and abs(
+                                                    bone.direction.pitch * Leap.RAD_TO_DEG + 165) < 30:
+                                f[1] = True
                 elif finger.type != 0:
                     for b in range(0, 4):
                         bone = finger.bone(b)
                         if bone.type == 1:
-                            f[finger.type] = (abs(bone.direction.yaw * Leap.RAD_TO_DEG - 90) < 30) \
-                                             and (abs(bone.direction.pitch * Leap.RAD_TO_DEG + 90) < 30)
-    if f[1] and f[2] and f[3] and f[4] and lastWord != 'you':
-        print 'you'
-        player('you')
-        lastWord = 'you'
-        return True
+                            #                            print str(bone.direction.yaw * Leap.RAD_TO_DEG) + " " + str(bone.direction.pitch * Leap.RAD_TO_DEG)
+                            if abs(bone.direction.yaw * Leap.RAD_TO_DEG - 90) < 30 and abs(
+                                                    bone.direction.pitch * Leap.RAD_TO_DEG + 90) < 30:
+                                f[finger.type] = True
+    if f[1] and f[2] and f[3] and f[4]:
+        if abs(hand.palm_normal.yaw * Leap.RAD_TO_DEG + 90) <= 30 and abs(
+                                hand.palm_normal.roll * Leap.RAD_TO_DEG + 90) <= 30 and lastWord != 'you':
+            print "you"
+            player('you')
+            lastWord = "you"
+            return True
     return False
 
 
@@ -555,8 +646,8 @@ class LeapMotionListener(Leap.Listener):
         #     if lastWord != 'love':
         #         love(frame)
 
-        area(frame) or cold(frame) or day(frame) or house(frame) or love(frame) or mom_grandma_dad_grandpa(frame) \
-        or please(frame) or strong(frame) or what(frame) or you(frame)
+        area(frame) or can(frame) or cold(frame) or day(frame) or hi(frame) or house(frame) or love(frame) \
+        or mom_grandma_dad_grandpa(frame) or please(frame) or strong(frame) or what(frame) or yes(frame) or you(frame)
 
 
 def main():
