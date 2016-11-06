@@ -131,7 +131,7 @@ def please(frame):
     op = False
     for hand in frame.hands:
         for gesture in frame.gestures():
-            if gesture.type == Leap.Gesture.TYPE_CIRCLE:
+            
                 circle = CircleGesture(gesture)
 
                 # yaw = -90 roll = 90
@@ -420,7 +420,7 @@ class LeapMotionListener(Leap.Listener):
                 if gesture.type == Leap.Gesture.TYPE_CIRCLE:
                     circle = CircleGesture(gesture)
 
-
+					
                     # yaw = -90 roll = 90
                     if (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI/2)==False:
                         #print "\n1"

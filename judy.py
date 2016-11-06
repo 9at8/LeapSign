@@ -59,8 +59,169 @@ def love(frame):
 			thumb_up = False if projection_on_direction_thumb < -.75 else True
 
 			if index_up and not middle_up and not ring_up and pinky_up and thumb_up:
-				print "I love you"
-				lastWord = "love"
+				if hand.is_right: 
+					if abs(hand.palm_normal.pitch * Leap.RAD_TO_DEG) < 1:
+						print "I love you"
+						lastWord = "love"
+			if index_up and middle_up and ring_up and pinky_up and thumb_up:
+				if hand.is_right: 
+					if abs(hand.palm_normal.pitch * Leap.RAD_TO_DEG) < 1:
+						print "five" 
+
+''' def very(frame):
+	global lastWord
+	for hand in frame.hands:
+		TYPE_THUMB=0;
+		TYPE_INDEX=TYPE_PROXIMAL=1
+		TYPE_MIDDLE=TYPE_INTERMEDIATE=2
+		TYPE_RING=TYPE_DISTAL=3
+		TYPE_PINKY=4
+
+		tip_ind = Leap.Vector(10000,1000,1000)
+		knuck_ind = Leap.Vector(102,204,1283)
+		tip_mid = Leap.Vector (123,33,22)
+		knuck_mid = Leap.Vector(2,3,15)
+
+		for finger in hand.fingers:
+
+			if finger.type == TYPE_INDEX:
+				for i in xrange(4):
+					bone = finger.bone(i)
+					if bone.type == TYPE_DISTAL:
+						tip_ind = bone.direction
+					if bone.type == TYPE_PROXIMAL:
+						knuck_ind = bone.direction
+					
+			elif finger.type == TYPE_MIDDLE:
+				for i in xrange(4):
+					bone = finger.bone(i)
+					if bone.type == TYPE_DISTAL:
+						tip_mid = bone.direction
+					if bone.type == TYPE_PROXIMAL:
+						knuck_mid = bone.direction
+
+			TIP_DIS = tip_ind - tip_mid
+			KNUCK_DIS = knuck_ind - knuck_mid 
+
+		if (TIP_DIS + KNUCK_DIS <= 0.2 or TIP_DIS + KNUCK_DIS >= -0.2):
+			print "very" 
+			lastWord = 'very'
+''' 
+'''
+def but(frame):
+	global lastWord
+	for hand in frame.hands:
+		handType = "LeftHand" if hand.is_left else "RightHand"
+
+		leftworks = False
+		rightworks = False
+
+		for gesture in frame.gestures():
+			if gesture.type == Leap.Gesture.TYPE_SWIPE:
+				swipe = SwipeGesture(gesture)
+				
+				if handType == "LeftHand": 
+						if (swipe.state != Leap.Gesture.STATE_START):
+							if (swipe.direction.yaw * Leap.RAD_TO_DEG >= 30 and swipe.direction.yaw * Leap.RAD_TO_DEG <= 140 and swipe.direction.roll * Leap.RAD_TO_DEG >= 15 and swipe.direction.roll * Leap.RAD_TO_DEG <=180) == False: 
+								print "LEFT yaw: " + str(swipe.direction.yaw * Leap.RAD_TO_DEG)
+								print "LEFT roll: " + str(swipe.direction.roll * Leap.RAD_TO_DEG)
+								leftworks = True
+								print "LEFT OK" 
+
+				elif handType == "RightHand":
+						if (swipe.state != Leap.Gesture.STATE_START):
+							if (swipe.direction.yaw * Leap.RAD_TO_DEG >= 30 and swipe.direction.yaw * Leap.RAD_TO_DEG <= 140 and swipe.direction.roll * Leap.RAD_TO_DEG >= 15 and swipe.direction.roll * Leap.RAD_TO_DEG <= 180) == True:
+								print "RIGHT yaw: " + str(swipe.direction.yaw * Leap.RAD_TO_DEG)
+								print "RIGHT ole: " + str(swipe.direction.roll * Leap.RAD_TO_DEG)
+								rightworks = True 
+								print "RIGHT OK" 
+
+		
+		if (rightworks and leftworks) == True: 
+			print "but" 
+			lastWord = 'but'						
+''' 
+
+def hello (frame):
+	global lastWord 
+	for hand in frame.hands: 
+		question = 0
+		for gesture in frame.gestures():
+			if gesture.type == Leap.Gesture.TYPE_SWIPE:
+				swipe = SwipeGesture(gesture) 
+
+				if (swipe.state != Leap.Gesture.STATE_START):
+					if (swipe.direction.yaw * Leap.RAD_TO_DEG >=5 and swipe.direction.yaw * Leap.RAD_TO_DEG <=70 and swipe.direction.pitch * Leap.RAD_TO_DEG >= 5 and swipe.direction.pitch * Leap.RAD_TO_DEG <=80) == True:
+						print "hello"
+						lastWord = 'hello'
+					
+
+def body (frame): 
+	global lastWord 
+	for hand in frame.hands: 
+		handType = "LeftHand" if hand.is_left else "RightHand"
+
+		wordleft = False 
+		wordright = False 
+
+		for gesture in frame.gestures():
+			if handType == "LeftHand":
+				if gesture.type == Leap.Gesture.TYPE_SWIPE: 
+					swipe = SwipeGesture(gesture)
+					if (swipe.state != Leap.Gesture.STATE_START):
+						print str(swipe.direction.roll * Leap.RAD_TO_DEG) + " " + str(swipe.direction.pitch * Leap.RAD_TO_DEG)
+						if (swipe.direction.roll * Leap.RAD_TO_DEG <= -100 and swipe.direction.roll * Leap.RAD_TO_DEG >= -180 and abs(swipe.direction.pitch * Leap.RAD_TO_DEG - 90) < 30 ) == True:
+							wordleft = True 
+							print "bodyleft" 
+
+			if handType == "RightHand":
+				if gesture.type == Leap.Gesture.TYPE_SWIPE: 
+					swipe = SwipeGesture(gesture)
+					if (swipe.state != Leap.Gesture.STATE_START):
+						if (swipe.direction.roll * Leap.RAD_TO_DEG >= 100 and swipe.direction.roll * Leap.RAD_TO_DEG <= 180) == True:
+							wordright = True 
+							print "bodyright"
+			
+		if (wordright and wordleft) == True:
+			print "body"
+			lastWord = "body"
+
+def bye (frame):
+    global lastWord
+    strong = [False, False]
+
+    for hand in frame.hands:
+
+        normal = hand.palm_normal
+        direction = hand.direction
+        strength = hand.grab_strength
+
+
+        if hand.is_left and strength >= 0.9:
+            if 100 >= (direction.yaw * Leap.RAD_TO_DEG) >= 60:
+                strong[0] = True
+            else:
+                strong[0] = False
+        elif hand.is_right and strength >= 0.9:
+            if -100 <= direction.yaw * Leap.RAD_TO_DEG <= -60:
+                strong[1] = True
+            else:
+                strong[1] = False
+
+        if strong[0] and strong[1]:
+            if lastWord != 'strong':
+                lastWord = 'strong'
+                print 'strong'
+                player('strong')
+                return True
+    return False
+
+'''
+ if gesture.type == Leap.Gesture.TYPE_SWIPE:
+                    swipe = SwipeGesture(gesture)
+                    #print "Swipe ID: " + str(swipe.id) + " State: " + self.state_names[gesture.state] + " Position: " + str(swipe.position) + " Direction:" + str(swipe.direction) + " Swipe: (mm/s): " + str(swipe.speed)
+                    """
+'''
 
 class LeapMotionListener(Leap.Listener):
 	finger_names = ['Thumb', 'Index', 'Middle','Ring','Pinky'];
@@ -132,6 +293,11 @@ class LeapMotionListener(Leap.Listener):
 
 		if lastWord != "love":
 			love(frame)
+
+		if lastWord != "hello":
+			hello(frame)
+
+		body(frame)
 
 def main():
 	listener = LeapMotionListener()

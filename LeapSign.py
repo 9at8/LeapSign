@@ -40,6 +40,24 @@ def area(frame):
     return False
 
 
+def can(frame):
+    global lastWord
+    if lastWord == 'can':
+        return False
+    if len(frame.hands) != 2:
+        return False
+    hand0 = frame.hands[0]
+    hand1 = frame.hands[1]
+    if hand0.grab_strength > 0.7 and hand1.grab_strength > 0.7:
+        if hand0.sphere_radius < 40 and hand1.sphere_radius < 40:
+            if hand0.palm_velocity.magnitude > 700 and hand1.palm_velocity.magnitude > 700:
+                print 'can'
+                player('can')
+                lastWord = 'can'
+                return True
+    return False
+
+
 def cold(frame):
     global lastWord
     cold = [False, False]
@@ -490,6 +508,23 @@ def what(frame):
     return False
 
 
+def yes(frame):
+    global lastWord
+    if lastWord == 'yes':
+        return False
+    if len(frame.hands) != 1:
+        return False
+    for hand in frame.hands:
+        if hand.grab_strength > 0.7:
+            if hand.sphere_radius < 40:
+                if hand.palm_velocity.magnitude > 700:
+                    print 'yes'
+                    lastWord = 'yes'
+                    player('yes')
+                    return True
+    return False
+
+
 def you(frame):
     global lastWord
     f = [False, False, False, False, False]
@@ -555,8 +590,8 @@ class LeapMotionListener(Leap.Listener):
         #     if lastWord != 'love':
         #         love(frame)
 
-        area(frame) or cold(frame) or day(frame) or house(frame) or love(frame) or mom_grandma_dad_grandpa(frame) \
-        or please(frame) or strong(frame) or what(frame) or you(frame)
+        area(frame) or can(frame) or cold(frame) or day(frame) or house(frame) or love(frame) \
+        or mom_grandma_dad_grandpa(frame) or please(frame) or strong(frame) or what(frame) or yes(frame) or you(frame)
 
 
 def main():
