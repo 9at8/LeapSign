@@ -18,6 +18,28 @@ def player(file):
     p.play()
 
 
+def area(frame):
+    global lastWord
+    op = False
+    for hand in frame.hands:
+        for gesture in frame.gestures():
+            if gesture.type == Leap.Gesture.TYPE_CIRCLE:
+                circle = CircleGesture(gesture)
+                if circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2:
+                    if hand.is_right:
+                        if circle.state != Leap.Gesture.STATE_START:
+                            if abs(hand.palm_normal.roll) * Leap.RAD_TO_DEG <= 45:
+                                if abs(hand.direction.yaw) * Leap.RAD_TO_DEG <= 45:
+                                    if circle.progress >= 1.75:
+                                        op = True
+    if op and lastWord != 'area':
+        print 'area'
+        player('area')
+        lastWord = 'area'
+        return True
+    return False
+
+
 def cold(frame):
     global lastWord
     cold = [False, False]
@@ -43,6 +65,35 @@ def cold(frame):
                 print 'cold'
                 player('cold')
                 return True
+    return False
+
+
+def day(frame):
+    global lastWord
+    lefthand = False
+    righthand = False
+    if frame.hands == 2:
+        lefthand = True
+        righthand = True
+    for hand in frame.hands:
+        if hand.is_left:
+            lefthand = (abs(hand.palm_normal.roll * Leap.RAD_TO_DEG) >= 150) and \
+                       (hand.direction.roll * Leap.RAD_TO_DEG >= 60) and \
+                       (hand.direction.roll * Leap.RAD_TO_DEG <= 120)
+        else:
+            for gesture in frame.gestures():
+                if gesture.type == Leap.Gesture.TYPE_SWIPE:
+                    swipe = SwipeGesture(gesture)
+                    if swipe.state != Leap.Gesture.STATE_START:
+                        righthand = (swipe.direction.yaw * Leap.RAD_TO_DEG >= 45) and \
+                                    (swipe.direction.yaw * Leap.RAD_TO_DEG <= 135) and \
+                                    (swipe.direction.roll * Leap.RAD_TO_DEG >= 90) and \
+                                    (swipe.direction.roll * Leap.RAD_TO_DEG <= 180)
+    if lefthand and righthand and lastWord != 'day':
+        print 'day'
+        # player('day')
+        lastWord = 'day'
+        return True
     return False
 
 
@@ -387,6 +438,26 @@ def please(frame):
     return False
 
 
+def what(frame):
+    global lastWord
+    lhand = False
+    rhand = False
+    controller = Leap.Controller()
+    for hand in frame.hands:
+        if abs(hand.palm_normal.roll) * Leap.RAD_TO_DEG > 150:
+            if abs(hand.palm_normal.pitch * Leap.RAD_TO_DEG - 90) < 30:
+                if hand.is_left:
+                    lhand = True
+                if hand.is_right:
+                    rhand = True
+    if lhand and rhand and lastWord != 'what':
+        print 'what'
+        player('what')
+        lastWord = 'what'
+        return True
+    return False
+
+
 class LeapMotionListener(Leap.Listener):
     def on_init(self, controller):
         print 'Initialized'
@@ -426,7 +497,7 @@ class LeapMotionListener(Leap.Listener):
         #     if lastWord != 'love':
         #         love(frame)
 
-        cold(frame) or house(frame) or love(frame) or please(frame) or mom_grandma_dad_grandpa(frame)
+        area(frame) or cold(frame) or day(frame) or house(frame) or love(frame) or mom_grandma_dad_grandpa(frame) or please(frame) or what(frame)
 
 
 def main():
