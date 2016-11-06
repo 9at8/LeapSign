@@ -40,6 +40,24 @@ def area(frame):
     return False
 
 
+def can(frame):
+    global lastWord
+    if lastWord == 'can':
+        return False
+    if len(frame.hands) != 2:
+        return False
+    hand0 = frame.hands[0]
+    hand1 = frame.hands[1]
+    if hand0.grab_strength > 0.7 and hand1.grab_strength > 0.7:
+        if hand0.sphere_radius < 40 and hand1.sphere_radius < 40:
+            if hand0.palm_velocity.magnitude > 700 and hand1.palm_velocity.magnitude > 700:
+                print 'can'
+                player('can')
+                lastWord = 'can'
+                return True
+    return False
+
+
 def cold(frame):
     global lastWord
     cold = [False, False]

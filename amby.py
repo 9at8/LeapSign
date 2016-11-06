@@ -1,11 +1,14 @@
 import Leap, sys, thread, time
 from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
+
 lastWord = ""
-TYPE_THUMB=TYPE_METACARPAL=0
-TYPE_INDEX=TYPE_PROXIMAL=1
-TYPE_MIDDLE=TYPE_INTERMEDIATE=2
-TYPE_RING=TYPE_DISTAL=3
-TYPE_PINKY=4
+TYPE_THUMB = TYPE_METACARPAL = 0
+TYPE_INDEX = TYPE_PROXIMAL = 1
+TYPE_MIDDLE = TYPE_INTERMEDIATE = 2
+TYPE_RING = TYPE_DISTAL = 3
+TYPE_PINKY = 4
+
+
 def RepresentsInt(s):
     try:
         int(s)
@@ -13,17 +16,20 @@ def RepresentsInt(s):
         return False
     return True
 
+
 def mom_grandma_dad_grandpa(frame):
     global lastWord
     for hand in frame.hands:
         if hand.sphere_radius > 80:
             handChirality = 1 if hand.is_right else -1
-            if Leap.PI/6 < hand.direction.pitch < Leap.PI/3:
-                if -2*Leap.PI/3 < handChirality*hand.palm_normal.roll < -Leap.PI/3:
+            if Leap.PI / 6 < hand.direction.pitch < Leap.PI / 3:
+                if -2 * Leap.PI / 3 < handChirality * hand.palm_normal.roll < -Leap.PI / 3:
                     for gesture in frame.gestures():
                         if gesture.type == Leap.Gesture.TYPE_CIRCLE:
                             circle = CircleGesture(gesture)
-                            if (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2) if handChirality == -1 else not (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2): #clockwise
+                            if (circle.pointable.direction.angle_to(
+                                    circle.normal) <= Leap.PI / 2) if handChirality == -1 else not (
+                                circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2):  # clockwise
                                 if circle.state != Leap.Gesture.STATE_START:
                                     if circle.progress >= 1.25:
                                         if lastWord != "grandma":
@@ -34,12 +40,14 @@ def mom_grandma_dad_grandpa(frame):
                         print "mom"
                         lastWord = "mom"
                         return True
-            if Leap.PI/3 < hand.direction.pitch < 2*Leap.PI/3:
-                if -2*Leap.PI/3 < handChirality*hand.palm_normal.roll < -Leap.PI/3:
+            if Leap.PI / 3 < hand.direction.pitch < 2 * Leap.PI / 3:
+                if -2 * Leap.PI / 3 < handChirality * hand.palm_normal.roll < -Leap.PI / 3:
                     for gesture in frame.gestures():
                         if gesture.type == Leap.Gesture.TYPE_CIRCLE:
                             circle = CircleGesture(gesture)
-                            if (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2) if handChirality == -1 else not (circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2): #clockwise
+                            if (circle.pointable.direction.angle_to(
+                                    circle.normal) <= Leap.PI / 2) if handChirality == -1 else not (
+                                circle.pointable.direction.angle_to(circle.normal) <= Leap.PI / 2):  # clockwise
                                 if circle.state != Leap.Gesture.STATE_START:
                                     if circle.progress >= 1.25:
                                         if lastWord != "grandpa":
@@ -51,40 +59,43 @@ def mom_grandma_dad_grandpa(frame):
                         lastWord = "dad"
                         return True
         return False
+
+
 def cross_fingers(frame):
     for hand in frame.hands:
-        disp_metacarpal=0.0
-        disp_distal=0.0
-        index_finger =None
-        middle_finger =None
-        index_finger_distal =None
-        middle_finger_distal =None
-        index_finger_metacarpal =None
-        middle_finger_metacarpal =None
-        for i in xrange(0,5):
-            finger_i=hand.fingers[i]
-            if finger_i.type==TYPE_MIDDLE:
-                middle_finger=finger_i
-            elif finger_i.type==TYPE_INDEX:
-                index_finger=finger_i
-        for i in xrange(0,4):
-            bone1=index_finger.bone(i)
-            bone2=middle_finger.bone(i)
-            if bone1.type==TYPE_DISTAL:
-                index_finger_distal=bone1
-            elif bone1.type==TYPE_METACARPAL:
-                index_finger_metacarpal=bone1
-            if bone2.type==TYPE_DISTAL:
-                middle_finger_distal=bone2
-            elif bone2.type==TYPE_METACARPAL:
-                middle_finger_metacarpal=bone2
-        if (index_finger_distal.center-middle_finger_distal.center).angle_to(index_finger_metacarpal.center-middle_finger_metacarpal.center) > Leap.PI/2:
+        disp_metacarpal = 0.0
+        disp_distal = 0.0
+        index_finger = None
+        middle_finger = None
+        index_finger_distal = None
+        middle_finger_distal = None
+        index_finger_metacarpal = None
+        middle_finger_metacarpal = None
+        for i in xrange(0, 5):
+            finger_i = hand.fingers[i]
+            if finger_i.type == TYPE_MIDDLE:
+                middle_finger = finger_i
+            elif finger_i.type == TYPE_INDEX:
+                index_finger = finger_i
+        for i in xrange(0, 4):
+            bone1 = index_finger.bone(i)
+            bone2 = middle_finger.bone(i)
+            if bone1.type == TYPE_DISTAL:
+                index_finger_distal = bone1
+            elif bone1.type == TYPE_METACARPAL:
+                index_finger_metacarpal = bone1
+            if bone2.type == TYPE_DISTAL:
+                middle_finger_distal = bone2
+            elif bone2.type == TYPE_METACARPAL:
+                middle_finger_metacarpal = bone2
+        if (index_finger_distal.center - middle_finger_distal.center).angle_to(
+                        index_finger_metacarpal.center - middle_finger_metacarpal.center) > Leap.PI / 2:
             if lastWord != "are":
                 print "are"
-                lastWord="are"
+                lastWord = "are"
                 return True
         return False
-        #print str((index_finger_distal.center-middle_finger_distal.center).angle_to(index_finger_metacarpal.center-middle_finger_metacarpal.center))
+        # print str((index_finger_distal.center-middle_finger_distal.center).angle_to(index_finger_metacarpal.center-middle_finger_metacarpal.center))
 
 
 def yes(frame):
@@ -101,7 +112,7 @@ def yes(frame):
                     lastWord = "yes"
                     return True
     return False
-    #print "grab strength: " + str(hand.grab_strength) + " sphere_radius: " + str(hand.sphere_radius) + "palm_velocity: " + str(hand.palm_velocity.magnitude)
+
 
 def can(frame):
     global lastWord
@@ -109,8 +120,8 @@ def can(frame):
         return False
     if len(frame.hands) != 2:
         return False
-    hand0=frame.hands[0]
-    hand1=frame.hands[1]
+    hand0 = frame.hands[0]
+    hand1 = frame.hands[1]
     if hand0.grab_strength > 0.7 and hand1.grab_strength > 0.7:
         if hand0.sphere_radius < 40 and hand1.sphere_radius < 40:
             if hand0.palm_velocity.magnitude > 700 and hand1.palm_velocity.magnitude > 700:
@@ -118,23 +129,25 @@ def can(frame):
                 lastWord = "can"
                 return True
     return False
+
+
 def number(frame):
     if len(frame.hands) != 1:
         return False
     global lastWord
     for hand in frame.hands:
         handChirality = 1 if hand.is_right else -1
-        if -Leap.PI/3 < handChirality*hand.palm_normal.roll < Leap.PI/3:
-            #print "pitch of direction: " + str(hand.direction.pitch*Leap.RAD_TO_DEG) +"  Roll of palm_normal: "+ str(hand.palm_normal.roll*Leap.RAD_TO_DEG)
-            #print "hand palm radius: " + str(hand.sphere_radius)
-            #print "palm velocity: " + str(hand.palm_velocity.magnitude)
-                #print "cross product between index-distal and other finger distals: "
-            angle_to_index=0.0
-            angle_to_middle=0.0
-            angle_to_ring=0.0
-            angle_to_pinky=0.0
-            angle_between_thumb=0.0
-            projection_on_direction_thumb=0.0
+        if -Leap.PI / 3 < handChirality * hand.palm_normal.roll < Leap.PI / 3:
+            # print "pitch of direction: " + str(hand.direction.pitch*Leap.RAD_TO_DEG) +"  Roll of palm_normal: "+ str(hand.palm_normal.roll*Leap.RAD_TO_DEG)
+            # print "hand palm radius: " + str(hand.sphere_radius)
+            # print "palm velocity: " + str(hand.palm_velocity.magnitude)
+            # print "cross product between index-distal and other finger distals: "
+            angle_to_index = 0.0
+            angle_to_middle = 0.0
+            angle_to_ring = 0.0
+            angle_to_pinky = 0.0
+            angle_between_thumb = 0.0
+            projection_on_direction_thumb = 0.0
             for finger in hand.fingers:
                 '''if finger.type==TYPE_THUMB:
                     for i in xrange(4):
@@ -153,40 +166,41 @@ def number(frame):
                                     angle_between_thumb=bone_i.direction.angle_to(bone_j.direction)
                                     break
                             break'''
-                if finger.type==TYPE_THUMB:
+                if finger.type == TYPE_THUMB:
                     for i in xrange(4):
-                        bone=finger.bone(i)
-                        if bone.type==TYPE_PROXIMAL:
-                            projection_on_direction_thumb=bone.direction.dot(hand.palm_normal+hand.direction)/(hand.palm_normal+hand.direction).magnitude
+                        bone = finger.bone(i)
+                        if bone.type == TYPE_PROXIMAL:
+                            projection_on_direction_thumb = bone.direction.dot(hand.palm_normal + hand.direction) / (
+                            hand.palm_normal + hand.direction).magnitude
 
-                elif finger.type==TYPE_INDEX:
+                elif finger.type == TYPE_INDEX:
                     for i in xrange(4):
-                        bone=finger.bone(i)
-                        if bone.type==TYPE_DISTAL:
-                            angle_to_index=bone.direction.angle_to(hand.direction)
-                elif finger.type==TYPE_MIDDLE:
+                        bone = finger.bone(i)
+                        if bone.type == TYPE_DISTAL:
+                            angle_to_index = bone.direction.angle_to(hand.direction)
+                elif finger.type == TYPE_MIDDLE:
                     for i in xrange(4):
-                        bone=finger.bone(i)
-                        if bone.type==TYPE_DISTAL:
-                            angle_to_middle=bone.direction.angle_to(hand.direction)
-                elif finger.type==TYPE_RING:
+                        bone = finger.bone(i)
+                        if bone.type == TYPE_DISTAL:
+                            angle_to_middle = bone.direction.angle_to(hand.direction)
+                elif finger.type == TYPE_RING:
                     for i in xrange(4):
-                        bone=finger.bone(i)
-                        if bone.type==TYPE_DISTAL:
-                            angle_to_ring=bone.direction.angle_to(hand.direction)
+                        bone = finger.bone(i)
+                        if bone.type == TYPE_DISTAL:
+                            angle_to_ring = bone.direction.angle_to(hand.direction)
                 else:
                     for i in xrange(4):
-                        bone=finger.bone(i)
-                        if bone.type==TYPE_DISTAL:
-                            angle_to_pinky=bone.direction.angle_to(hand.direction)
+                        bone = finger.bone(i)
+                        if bone.type == TYPE_DISTAL:
+                            angle_to_pinky = bone.direction.angle_to(hand.direction)
 
             index_up = False if angle_to_index < 1 else True
             middle_up = False if angle_to_middle < 1 else True
             ring_up = False if angle_to_ring < 1 else True
             pinky_up = False if angle_to_pinky < 1 else True
             thumb_up = False if projection_on_direction_thumb < -.9 else True
-            #print str(int(pinky_up)) + str(int(ring_up)) + str(int(middle_up)) + str(int(index_up)) + str(int(thumb_up))
-            #print str(projection_on_direction_thumb)
+            # print str(int(pinky_up)) + str(int(ring_up)) + str(int(middle_up)) + str(int(index_up)) + str(int(thumb_up))
+            # print str(projection_on_direction_thumb)
             if not index_up and not middle_up and not ring_up and not pinky_up and not thumb_up:
                 if RepresentsInt(lastWord):
                     if int(lastWord) != 0:
@@ -299,6 +313,7 @@ def number(frame):
                     return True
     return False
 
+
 '''
 def no(controller):
     global lastWord
@@ -326,9 +341,11 @@ def no(controller):
         else:
             return False
 '''
+
+
 def no(controller):
     global lastWord
-    if lastWord  == "no":
+    if lastWord == "no":
         return False
     frame = controller.frame()
     if len(frame.hands) != 1:
@@ -336,9 +353,9 @@ def no(controller):
     for hand in frame.hands:
         if hand.pinch_strength > 0.2:
             return False
-    frame_buffer=[]
+    frame_buffer = []
     frame_buffer.append(frame)
-    frame_gap=int(frame.current_frames_per_second//5)
+    frame_gap = int(frame.current_frames_per_second // 5)
     for i in xrange(4):
         frame = controller.frame(frame_gap)
         if not frame.is_valid:
@@ -349,7 +366,7 @@ def no(controller):
     for hand in frame_buffer[4].hands:
         if hand.pinch_strength < 0.3:
             for hand in frame_buffer[2].hands:
-                if hand.pinch_strength>0.7:
+                if hand.pinch_strength > 0.7:
                     print "no"
                     lastWord = "no"
                     return True
@@ -380,14 +397,16 @@ class LeapMotionListener(Leap.Listener):
 
     def on_frame(self, controller):
         frame = controller.frame()
-        #if not mom_grandma_dad_grandpa(frame):
+        # if not mom_grandma_dad_grandpa(frame):
         #    mom_grandma_dad_grandpa(frame)
         if not yes(frame):
             can(frame)
-        #number(frame)
-        #no(controller)
-        #cross_fingers(frame)
-        #number(frame)
+            # number(frame)
+            # no(controller)
+            # cross_fingers(frame)
+            # number(frame)
+
+
 def main():
     listener = LeapMotionListener()
     controller = Leap.Controller()
